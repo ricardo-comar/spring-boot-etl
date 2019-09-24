@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: border-service
+    
+server:
+  port: 8080
+  
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:${server.port}/eureka/
+
+zuul:
+  ignored-services: '*'
+  prefix: /app
+  routes:
+    producer:
+      service-id: producer
+      path: /producer/**
+      
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000  
+  eureka:
+    enabled: true
+    
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+    

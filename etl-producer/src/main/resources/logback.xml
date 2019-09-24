@@ -1,0 +1,25 @@
+<configuration>
+
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+
+	<appender name="splunk" class="com.splunk.logging.TcpAppender">
+		<RemoteHost>127.0.0.1</RemoteHost>
+		<Port>1514</Port>
+		<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+			<timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
+			<timestampFormatTimezoneId>America/Sao_Paulo</timestampFormatTimezoneId>
+			<appendLineSeparator>true</appendLineSeparator>
+			<jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+				<prettyPrint>false</prettyPrint>
+			</jsonFormatter>
+		</layout>
+	</appender>
+	
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+	<logger name="com.github.ricardocomar.springdataflowetl" additivity="false" level="INFO">
+		<appender-ref ref="splunk" />
+	</logger>
+
+</configuration>

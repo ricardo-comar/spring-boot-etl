@@ -1,0 +1,56 @@
+etl-producer:
+  instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  concurrent-processor:
+    wait-timeout: 10000
+  consumer:
+    container-factory:
+      concurrency: 25
+      properties:
+        pool-timeout: 30000
+  rest-template:
+    redirect:
+      read-timeout: 1000
+      connect-timeout: 500
+
+server:
+  port: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8080/eureka}
+  instance:
+    appname: etl-producer
+    instance-id: producer-${random.value}
+
+
+spring:
+  application:
+    name: etl-producer
+  activemq:
+    user: admin
+    password: password
+    in-memory: false
+    broker-url: tcp://localhost:61616
+  kafka:
+    consumer:
+      bootstrap-servers: kafka-1:19092,kafka-2:29092,kafka-3:39092
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      properties:
+        interceptor:
+          classes: com.github.ricardocomar.springdataflowetl.etlproducer.config.KafkaMessageInterceptor
+      bootstrap-servers: kafka-1:19092,kafka-2:29092,kafka-3:39092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

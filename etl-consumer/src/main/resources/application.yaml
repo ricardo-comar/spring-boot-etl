@@ -1,0 +1,39 @@
+server:
+  port: 0
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8080/eureka}
+  instance:
+    appname: etl-consumer
+    instance-id: beanio-consumer-${random.value}
+
+camel:
+  springboot:
+    main-run-controller: true    
+
+spring:
+  application:
+    name: etl-consumer
+  activemq:
+    user: admin
+    password: password
+    in-memory: false
+    broker-url: tcp://localhost:61616
+  kafka:
+    consumer:
+      bootstrap-servers: kafka-1:19092,kafka-2:29092,kafka-3:39092
+      group-id: consumerGroup
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      properties:
+        interceptor:
+          classes: com.github.ricardocomar.springdataflowetl.etlconsumer.config.KafkaMessageInterceptor
+      bootstrap-servers: kafka-1:19092,kafka-2:29092,kafka-3:39092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer

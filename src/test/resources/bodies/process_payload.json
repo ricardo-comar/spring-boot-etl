@@ -1,0 +1,5 @@
+{ 
+    "id":"${requestId}", 
+    "durationMin": ${delayMin}, 
+    "durationMax": ${delayMax}
+}
