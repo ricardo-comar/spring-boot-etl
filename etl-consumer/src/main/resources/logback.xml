@@ -6,7 +6,7 @@
 	<appender name="splunk" class="com.splunk.logging.TcpAppender">
 		<RemoteHost>127.0.0.1</RemoteHost>
 		<Port>1514</Port>
-		<layout class="com.github.ricardocomar.springdataflowetl.etlconsumer.config.CustomJsonLayout">
+		<layout class="com.github.ricardocomar.springbootetl.etlconsumer.config.CustomJsonLayout">
 			<timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSSX</timestampFormat>
 			<timestampFormatTimezoneId>America/Sao_Paulo</timestampFormatTimezoneId>
 			<appendLineSeparator>true</appendLineSeparator>
