@@ -27,17 +27,13 @@ public class ResponseConsumer {
 	private ApplicationContext appContext;
 
 	@KafkaListener(topics = "topicOutbound", groupId = "producer-${random.value}")
-	// TODO: reativar public void consumeResponse(@Payload final ResponseMessage
-	// message) {
-	public void consumeResponse(@Payload final String message,
+	public void consumeResponse(@Payload final ResponseMessage message,
 			@Header(required = false, name = AppProperties.HEADER_REQUEST_ID) final String requestId)
 			throws Exception {
-		// TODO: desativar
-		final ResponseMessage response = MAPPER.readerFor(ResponseMessage.class).readValue(message);
 
-		LOGGER.info("Received Message: {}", response);
+		LOGGER.info("Received Message: {}", message);
 		
-		appContext.publishEvent(new MessageEvent(requestId, response));
+		appContext.publishEvent(new MessageEvent(requestId, message));
 		
 	}
 }

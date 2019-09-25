@@ -1,5 +1,6 @@
-package com.github.ricardocomar.apachecameletl.camelconsumer.consumer;
+package com.github.ricardocomar.springdataflowetl.etlconsumer.consumer;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,5 +12,9 @@ import com.github.ricardocomar.springdataflowetl.etlconsumer.config.AppPropertie
 @EnableConfigurationProperties(AppProperties.class)
 @ActiveProfiles("test")
 public class MessageConsumerIntegrationTest {
+
+	@Test
+	public void testContext() throws Exception {
+	}
 
 }

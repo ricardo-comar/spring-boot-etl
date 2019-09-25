@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import com.github.ricardocomar.apachecameletl.camelconsumer.producer.ReturnProducer;
-import com.github.ricardocomar.apachecameletl.camelconsumer.service.MessageProcessor;
-import com.github.ricardocomar.apachecameletl.model.ResponseMessage;
+import com.github.ricardocomar.springdataflowetl.etlconsumer.processor.MessageProcessor;
 
 @Component
 public class MessageConsumer {
@@ -17,18 +15,15 @@ public class MessageConsumer {
 
 	@Autowired
 	private MessageProcessor processor;
-	
-	@Autowired
-	private ReturnProducer producer;
 
 	@JmsListener(destination = "queue.sample")
 	public void handle(final String message) {
 
-		LOGGER.info("Received Message ({})", message);
-		
-		final ResponseMessage response = processor.process(message);
-		LOGGER.info("Message Processed: ({})", response);
-		
-		producer.sendMessage(response);
+		try {
+			LOGGER.info("Received Message, will be processed ({})", message);
+			processor.process(message);
+		} catch (final Exception e) {
+			LOGGER.error("Error processing message", e);
+		}
 	}
 }

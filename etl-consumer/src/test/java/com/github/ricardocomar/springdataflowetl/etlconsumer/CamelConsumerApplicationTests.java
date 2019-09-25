@@ -1,4 +1,4 @@
-package com.github.ricardocomar.apachecameletl.camelconsumer;
+package com.github.ricardocomar.springdataflowetl.etlconsumer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

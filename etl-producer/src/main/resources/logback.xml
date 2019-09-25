@@ -18,7 +18,7 @@
 	<root level="INFO">
 		<appender-ref ref="CONSOLE" />
 	</root>
-	<logger name="com.github.ricardocomar.springdataflowetl" additivity="false" level="INFO">
+	<logger name="com.github.ricardocomar" additivity="false" level="INFO">
 		<appender-ref ref="splunk" />
 	</logger>
 

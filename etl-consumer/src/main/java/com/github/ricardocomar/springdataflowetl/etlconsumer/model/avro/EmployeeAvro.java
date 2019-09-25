@@ -1,7 +1,7 @@
 package com.github.ricardocomar.springdataflowetl.etlconsumer.model.avro;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,5 @@ public class EmployeeAvro {
 	private String lastName;
 	private String title;
 	private BigDecimal salary;
-	private Date hireDate;
+	private LocalDate hireDate;
 }

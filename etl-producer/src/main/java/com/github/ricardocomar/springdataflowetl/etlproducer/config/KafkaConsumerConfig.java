@@ -11,6 +11,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.RecordInterceptor;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import com.github.ricardocomar.springdataflowetl.model.ResponseMessage;
 
@@ -21,26 +22,26 @@ public class KafkaConsumerConfig {
 	private AppProperties appProps;
 
 	@Bean
-	public ConsumerFactory<String, String> consumerFactory(
+	public ConsumerFactory<String, ResponseMessage> consumerFactory(
 			@Autowired final KafkaProperties kafkaProps) {
-//TODO: reativar final JsonDeserializer<Object> jsonDeserializer = new JsonDeserializer<>();
-//		jsonDeserializer.addTrustedPackages("*");
+		final JsonDeserializer<ResponseMessage> jsonDeserializer = new JsonDeserializer<>();
+		jsonDeserializer.addTrustedPackages("*");
 		return new DefaultKafkaConsumerFactory<>(
 				kafkaProps.buildConsumerProperties(), new StringDeserializer(),
-//TODO: reativar				jsonDeserializer);
-				new StringDeserializer());
+				jsonDeserializer);
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(
-			final ConsumerFactory<String, String> consumerFactory) {
-		final ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, ResponseMessage> kafkaListenerContainerFactory(
+			final ConsumerFactory<String, ResponseMessage> consumerFactory) {
+		final ConcurrentKafkaListenerContainerFactory<String, ResponseMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
-//TODO: reativar		factory.setRecordInterceptor(recordInterceptor());
+		factory.setRecordInterceptor(recordInterceptor());
 		factory.setConcurrency(appProps.getConsumer().getContainerFactory().getConcurrency());
 		factory.getContainerProperties()
 				.setPollTimeout(appProps.getConsumer().getContainerFactory().getProperties().getPoolTimeout());
-//TODO: reativar		factory.setRecordFilterStrategy(
+//TODO: reativar
+//		factory.setRecordFilterStrategy(
 //				record -> !appProps.getInstanceId().equals(record.value().getOrigin()));
 		return factory;
 	}

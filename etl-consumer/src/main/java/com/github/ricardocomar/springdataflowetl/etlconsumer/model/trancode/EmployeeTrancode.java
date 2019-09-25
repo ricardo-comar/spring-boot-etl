@@ -1,6 +1,6 @@
 package com.github.ricardocomar.springdataflowetl.etlconsumer.model.trancode;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.beanio.annotation.Field;
 import org.beanio.annotation.Record;
@@ -21,10 +21,10 @@ public class EmployeeTrancode {
 	private String firstName;
 	@Field(ordinal = 1, length = 10)
 	private String lastName;
-	@Field(ordinal = 2, length = 10)
+	@Field(ordinal = 2, length = 15)
 	private String title;
 	@Field(ordinal = 3, length = 10)
 	private String salary;
 	@Field(ordinal = 4, format = "ddMMyyyy", length = 8)
-	private Date hireDate;
+	private LocalDate hireDate;
 }

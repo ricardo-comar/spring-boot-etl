@@ -19,5 +19,7 @@ public interface EmployeeMapper {
 	EmployeeAvro trancodeToAvro(EmployeeTrancode team);
 
 	@InheritInverseConfiguration
+	@Mappings({
+			@Mapping(target = "salary", expression = "java(String.format(\"%01.0f\", team.getSalary().multiply(new java.math.BigDecimal(100))))") })
 	EmployeeTrancode avroToTrancode(EmployeeAvro team);
 }

@@ -79,8 +79,12 @@
 	        <artifactId>mapstruct</artifactId>
 	        <version>${org.mapstruct.version}</version>
 	    </dependency>
-		
-
+	    <dependency>
+		    <groupId>com.github.mvallim</groupId>
+			<artifactId>java-fluent-validator</artifactId>
+			<version>1.7.1</version>
+	    </dependency>
+ 
 		<!--  Tests  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -102,6 +106,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>br.com.six2six</groupId>
+			<artifactId>fixture-factory</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
+		</dependency>		
 
 		<!-- Observability -->
 		<dependency>
@@ -153,6 +163,26 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <configuration>
+	                <source>1.8</source>
+	                <target>1.8</target>
+	                <annotationProcessorPaths>
+	                    <path>
+	                        <groupId>org.mapstruct</groupId>
+	                        <artifactId>mapstruct-processor</artifactId>
+	                        <version>${org.mapstruct.version}</version>
+	                    </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>	                    
+	                </annotationProcessorPaths>
+	            </configuration>
+	        </plugin>			
 		</plugins>
 	</build>
 

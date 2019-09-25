@@ -23,7 +23,7 @@ zuul:
   prefix: /app
   routes:
     producer:
-      service-id: producer
+      service-id: etl-producer
       path: /producer/**
       
 ribbon:
