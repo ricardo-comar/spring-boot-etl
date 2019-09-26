@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ErrorMessage implements ResponseMessage {
+public class ErrorMessage {
 	private final String id;
 	private final String payload;
 	private final List<ErrorItem> errors;

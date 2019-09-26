@@ -216,3 +216,5 @@ You will be able to monitor the progress, with a few informations about the succ
 * https://www.baeldung.com/zuul-load-balancing
 * https://www.treinaweb.com.br/blog/documentando-uma-api-spring-boot-com-o-swagger/
 * http://dev.splunk.com/view/splunk-logging-java/SP-CAAAE3R
+* https://github.com/simplesteph/kafka-stack-docker-compose
+* https://www.confluent.io/blog/schema-registry-avro-in-spring-boot-application-tutorial

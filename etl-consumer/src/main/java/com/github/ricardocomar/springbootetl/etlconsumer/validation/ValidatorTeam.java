@@ -10,12 +10,12 @@ import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.TeamTrancode;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 import br.com.fluentvalidator.AbstractValidator;
 
 @Component
-public class ValidatorTeam extends AbstractValidator<TeamTrancode> {
+public class ValidatorTeam extends AbstractValidator<Team> {
 	
 	@Autowired
 	private ValidatorEmployee valEmployee;
@@ -26,15 +26,15 @@ public class ValidatorTeam extends AbstractValidator<TeamTrancode> {
 
 		failFastRule();
 
-		ruleFor(TeamTrancode::getTeamName).must(not(stringEmptyOrNull())).when(stringEmptyOrNull())
+		ruleFor(Team::getTeamName).must(not(stringEmptyOrNull())).when(stringEmptyOrNull())
 				.withMessage("name is mandatory").withFieldName("teamName").critical(ETLValidationException.class);
 
-		ruleFor(TeamTrancode::getEmployees).must(between(Collection::size, 0, 5))
+		ruleFor(Team::getEmployees).must(between(Collection::size, 0, 5))
 				.withMessage("employees is mandatory and must be 1-4 size").withFieldName("teamName")
 				.critical(ETLValidationException.class)
 				;
 
-		ruleForEach(TeamTrancode::getEmployees).must(not(nullValue())).withMessage("team emplyees cannot be null")
+		ruleForEach(Team::getEmployees).must(not(nullValue())).withMessage("team emplyees cannot be null")
 				.whenever(not(nullValue())).withValidator(valEmployee).critical(ETLValidationException.class);
 	}
 

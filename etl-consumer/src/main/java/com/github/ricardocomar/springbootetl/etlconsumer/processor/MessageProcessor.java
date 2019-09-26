@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.TeamTrancode;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 import com.github.ricardocomar.springbootetl.etlconsumer.producer.ReturnProducer;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamAvroTransformer;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamTrancodeTransformer;
@@ -34,7 +34,7 @@ public class MessageProcessor {
 	public void process(final String message) {
 		LOGGER.info("Processing message: {}", message);
 		
-		final TeamTrancode teamTrancode = trancodeTransformer.from(message);
+		final Team teamTrancode = trancodeTransformer.from(message);
 		LOGGER.info("Message transformed into bean: {}", teamTrancode);
 		
 		final ValidationResult validationResult = validatorTeam.validate(teamTrancode);

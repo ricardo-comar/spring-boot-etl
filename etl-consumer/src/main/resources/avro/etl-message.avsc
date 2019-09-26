@@ -20,7 +20,8 @@
             {"name":"lastName", "type":"string", "avro.java.string": "String"},
             {"name":"title", "type":"string", "avro.java.string": "String"},
             {"name":"salary", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 4, "scale": 2 } },
-            {"name":"hireDate", "type":"string", "avro.java.string": "String"}
+            {"name":"hireDate", "type":"string", "avro.java.string": "String"},
+            {"name": "status", "type": { "type": "enum", "name": "EmployeeAvroStatus", "symbols": ["ACTIVE", "DISMISSED", "RESIGNED", "RETIRED"] } }
           ]
         }
       }

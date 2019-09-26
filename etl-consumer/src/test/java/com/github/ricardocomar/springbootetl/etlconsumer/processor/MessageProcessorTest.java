@@ -12,13 +12,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.RequestMessage;
 import com.github.ricardocomar.springbootetl.etlconsumer.fixture.RequestMessageFixture;
 import com.github.ricardocomar.springbootetl.etlconsumer.mapper.MapperSpringConfig;
 import com.github.ricardocomar.springbootetl.etlconsumer.producer.ReturnProducer;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TransformerSpringConfig;
 import com.github.ricardocomar.springbootetl.etlconsumer.validation.ValidationSpringConfig;
 import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
-import com.github.ricardocomar.springbootetl.model.RequestMessage;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -53,7 +53,7 @@ public class MessageProcessorTest {
 		}).when(mockProducer).sendMessage(Mockito.any());
 
 		final RequestMessage requestMessage = Fixture.from(RequestMessage.class).gimme("valid");
-		processor.process(requestMessage.getPayload());
+		processor.process(requestMessage.getTrancode());
 
 		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any());
 

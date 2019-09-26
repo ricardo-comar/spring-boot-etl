@@ -1,5 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.transformer;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import org.beanio.Marshaller;
@@ -11,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.TeamTrancode;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 @Component
 public class TeamTrancodeTransformer {
@@ -27,7 +28,8 @@ public class TeamTrancodeTransformer {
 
 		final StreamBuilder builder = new StreamBuilder("TeamTrancode").format("fixedlength")
 				.addTypeHandler(LocalDate.class, new LocalDateTypeHandler("yyyyMMdd"))
-				.parser(new FixedLengthParserBuilder()).addRecord(TeamTrancode.class);
+				.addTypeHandler(BigDecimal.class, new BigDecimalPositionalTypeHandler(8, 2))
+				.parser(new FixedLengthParserBuilder()).addRecord(Team.class);
 
 		final StreamFactory factory = StreamFactory.newInstance();
 		factory.define(builder);
@@ -36,16 +38,16 @@ public class TeamTrancodeTransformer {
 		marsh = factory.createMarshaller("TeamTrancode");
 	}
 
-	public TeamTrancode from(final String input) {
+	public Team from(final String input) {
 		LOGGER.debug("Transforming trancode into bean: {}", input);
 
-		final TeamTrancode output = (TeamTrancode) unmarsh.unmarshal(input);
+		final Team output = (Team) unmarsh.unmarshal(input);
 		LOGGER.debug("Resulted bean: {}", output);
 
 		return output;
 	}
 
-	public String to(final TeamTrancode input) {
+	public String to(final Team input) {
 		LOGGER.debug("Transforming bean into trancode: {}", input);
 
 		final String output = marsh.marshal(input).toString();

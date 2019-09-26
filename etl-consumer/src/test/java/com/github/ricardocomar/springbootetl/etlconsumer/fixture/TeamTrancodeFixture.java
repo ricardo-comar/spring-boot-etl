@@ -1,6 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.fixture;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.TeamTrancode;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.Rule;
@@ -10,7 +10,7 @@ public class TeamTrancodeFixture implements TemplateLoader {
 
 	@Override
 	public void load() {
-		Fixture.of(TeamTrancode.class).addTemplate("valid", new Rule() {
+		Fixture.of(Team.class).addTemplate("valid", new Rule() {
 			{
 				add("teamName", "Team ABC");
 			}

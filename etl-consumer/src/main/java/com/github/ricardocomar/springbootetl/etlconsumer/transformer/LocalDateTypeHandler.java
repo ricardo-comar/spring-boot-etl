@@ -31,9 +31,16 @@ public class LocalDateTypeHandler implements TypeHandler, ConfigurableTypeHandle
 
 	@Override
 	public TypeHandler newInstance(final Properties properties) throws IllegalArgumentException {
-		if (properties.containsKey("format") && properties.getProperty("format").equals(format)) {
+		if (!properties.containsKey("format")) {
+			throw new IllegalArgumentException("property \"format\" is mandatory");
+		}
+		final String formatProperty = properties.getProperty("format");
+		if (formatProperty.equals(format)) {
 			return this;
 		}
+
+		DateTimeFormatter.ofPattern(formatProperty);
+
 		return LocalDateTypeHandler.builder().format(properties.getProperty("format")).build();
 	}
 

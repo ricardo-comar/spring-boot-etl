@@ -1,5 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.config;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
@@ -9,16 +10,14 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.MDC;
 
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
-
-public class KafkaMessageInterceptor implements ProducerInterceptor<String, ResponseMessage> {
+public class KafkaMessageInterceptor implements ProducerInterceptor<String, Serializable> {
 
 	@Override
 	public void configure(final Map<String, ?> configs) {
 	}
 
 	@Override
-	public ProducerRecord<String, ResponseMessage> onSend(final ProducerRecord<String, ResponseMessage> record) {
+	public ProducerRecord<String, Serializable> onSend(final ProducerRecord<String, Serializable> record) {
 
 		Optional.ofNullable(MDC.get(AppProperties.PROP_CORRELATION_ID))
 				.ifPresent(
