@@ -2,11 +2,18 @@ package com.github.ricardocomar.springbootetl.etlproducer.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
+import org.apache.activemq.command.ActiveMQTextMessage;
+import org.assertj.core.util.Arrays;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,17 +21,21 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessagePostProcessor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
+import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
-import com.github.ricardocomar.springbootetl.etlproducer.service.ConcurrentProcessor;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
-import com.github.ricardocomar.springbootetl.model.RequestMessage;
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
+import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
+import com.github.ricardocomar.springbootetl.model.EmployeeAvroStatus;
+import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @EnableConfigurationProperties(AppProperties.class)
@@ -33,101 +44,113 @@ import com.github.ricardocomar.springbootetl.model.ResponseMessage;
 		ConcurrentProcessor.class }, initializers = ConfigFileApplicationContextInitializer.class)
 public class ConcurrentProcessorTest {
 
+	private static final EmployeeAvro EMPLOYEE_AVRO = EmployeeAvro.newBuilder().setFirstName("John").setLastName("Snow")
+			.setHireDate("20100520").setTitle("Developer").setSalary(new BigDecimal(1000.0))
+			.setStatus(EmployeeAvroStatus.ACTIVE).build();
+
 	@MockBean
 	private JmsTemplate template;
 
 	@Autowired
 	private ApplicationContext appContext;
 
+	@Autowired
+	private ConcurrentProcessor processor;
+
+	private String requestId;
+
 	@Before
 	public void before() {
-		Mockito.doNothing().when(template).convertAndSend(Mockito.anyString(), Mockito.anyString());
+		requestId = null;
+		Mockito.doAnswer((Answer<?>) invocation -> {
+			final MessagePostProcessor processor = invocation.getArgument(2);
+
+			final ActiveMQTextMessage message = new ActiveMQTextMessage();
+			processor.postProcessMessage(message);
+			requestId = message.getStringProperty(AppProperties.HEADER_REQUEST_ID);
+			return null;
+		}).when(template).convertAndSend(Mockito.anyString(), Mockito.anyString(),
+				Mockito.any(MessagePostProcessor.class));
+	}
+
+	@After
+	public void after() {
+		Mockito.verify(template, Mockito.atLeastOnce()).convertAndSend(Mockito.anyString(), Mockito.anyString(),
+				Mockito.any(MessagePostProcessor.class));
 	}
 
 	@Test
 	public void testRelease() {
-		final ResponseMessage response = ResponseMessage.builder().id("123").build();
-		final ResponseMessage expected = ResponseMessage.builder().id("123").payload("999").build();
+		final TeamAvro response = buildTeamAvro("Team NotUpdated");
+		final TeamAvro expected = buildTeamAvro("Team OK");
 
-		final ConcurrentProcessor processor = appContext.getBean(ConcurrentProcessor.class);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final ResponseMessage resp = processor.handle(RequestMessage.builder().id("123").build());
-					response.setPayload(resp.getPayload());
-				} catch (final UnavailableResponseException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		System.err.println("release - requestId=" + requestId);
+		new Thread(runnable(ProcessRequest.builder().payload("testRelease").build(), response)).start();
 		sleep(50);
 
-		appContext.publishEvent(new MessageEvent("", expected));
+		System.err.println("release - requestId=" + requestId);
+		appContext.publishEvent(new MessageEvent(requestId, expected));
 		sleep(50);
+		System.err.println("release - requestId=" + requestId);
 
 		assertThat(response, Matchers.equalTo(expected));
 	}
 
 	@Test
 	public void testTimeout() {
-		final ResponseMessage response = ResponseMessage.builder().id("456").build();
+		final TeamAvro response = buildTeamAvro("Team XYZ");
 
-		final ConcurrentProcessor processor = appContext.getBean(ConcurrentProcessor.class);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final ResponseMessage resp = processor.handle(RequestMessage.builder().id("456").build());
-					response.setPayload(resp.getPayload());
-				} catch (final UnavailableResponseException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		System.err.println("timeout - requestId=" + requestId);
+		new Thread(runnable(ProcessRequest.builder().payload("testTimeout").build(), response)).start();
 		sleep(350);
+		System.err.println("timeout - requestId=" + requestId);
 
-		assertThat(response.getPayload(), Matchers.nullValue());
+		assertThat(response.getTeamName(), Matchers.equalTo("Team XYZ"));
 	}
 
 	@Test
 	public void testConcurrent() {
-		final String successId = "AAA", timeoutId = "XXX";
-		final ResponseMessage responseSuccess = ResponseMessage.builder().id(successId).build();
-		final ResponseMessage expectedSuccess = ResponseMessage.builder().id(successId).payload("999").build();
-		final ResponseMessage responseTimeout = ResponseMessage.builder().id(timeoutId).build();
-		final ResponseMessage expectedTimeout = ResponseMessage.builder().id(timeoutId).build();
+		final TeamAvro responseSuccess = buildTeamAvro("Team NotUpdated");
+		final TeamAvro expectedSuccess = buildTeamAvro("Team OK");
 
-		final ConcurrentProcessor processor = appContext.getBean(ConcurrentProcessor.class);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final ResponseMessage resp = processor.handle(RequestMessage.builder().id(successId).build());
-					responseSuccess.setPayload(resp.getPayload());
-				} catch (final UnavailableResponseException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final ResponseMessage resp = processor.handle(RequestMessage.builder().id(timeoutId).build());
-					responseTimeout.setPayload(resp.getPayload());
-				} catch (final UnavailableResponseException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		final TeamAvro responseTimeout = buildTeamAvro("Team TimeOut");
+		final TeamAvro expectedTimeout = buildTeamAvro("Team TimeOut");
 
+		System.err.println("concurrent - requestId=" + requestId);
+		new Thread(runnable(ProcessRequest.builder().payload("testConcurrent-AAA").build(), responseSuccess)).start();
+		System.err.println("concurrent - requestId=" + requestId);
 		sleep(50);
-		appContext.publishEvent(new MessageEvent("", expectedSuccess));
+		appContext.publishEvent(new MessageEvent(requestId, expectedSuccess));
+		System.err.println("concurrent - requestId=" + requestId);
+
+		new Thread(runnable(ProcessRequest.builder().payload("testConcurrent-XXX").build(), responseTimeout)).start();
 		sleep(250);
+		System.err.println("concurrent - requestId=" + requestId);
 
 		assertThat(responseSuccess, Matchers.equalTo(expectedSuccess));
 		assertThat(responseTimeout, Matchers.equalTo(expectedTimeout));
+	}
+
+	public Runnable runnable(final ProcessRequest request, final TeamAvro response) {
+
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final TeamAvro resp = processor.handle(request);
+					response.setTeamName(resp.getTeamName());
+				} catch (final UnavailableResponseException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		return runnable;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private TeamAvro buildTeamAvro(final String teamName) {
+		return TeamAvro.newBuilder().setTeamName(teamName)
+				.setEmployees(new ArrayList(Arrays.asList(new EmployeeAvro[] { EMPLOYEE_AVRO }))).build();
 	}
 
 	private void sleep(final long duration) {

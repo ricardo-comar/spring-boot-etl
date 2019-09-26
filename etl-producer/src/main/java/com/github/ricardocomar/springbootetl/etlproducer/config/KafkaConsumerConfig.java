@@ -1,5 +1,7 @@
 package com.github.ricardocomar.springbootetl.etlproducer.config;
 
+import java.io.Serializable;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.MDC;
@@ -13,7 +15,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.RecordInterceptor;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
+import springfox.documentation.service.ResponseMessage;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -22,10 +24,10 @@ public class KafkaConsumerConfig {
 	private AppProperties appProps;
 
 	@Bean
-	public ConsumerFactory<String, ResponseMessage> consumerFactory(
+	public ConsumerFactory<String, Serializable> consumerFactory(
 			@Autowired final KafkaProperties kafkaProps) {
-		final JsonDeserializer<ResponseMessage> jsonDeserializer = new JsonDeserializer<>();
-		jsonDeserializer.addTrustedPackages("*");
+		final JsonDeserializer<Serializable> jsonDeserializer = new JsonDeserializer<>();
+		jsonDeserializer.addTrustedPackages("com.github.ricardocomar.springbootetl.model");
 		return new DefaultKafkaConsumerFactory<>(
 				kafkaProps.buildConsumerProperties(), new StringDeserializer(),
 				jsonDeserializer);

@@ -2,13 +2,13 @@ package com.github.ricardocomar.springbootetl.etlproducer.service.model;
 
 import org.springframework.context.ApplicationEvent;
 
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
+import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 public class MessageEvent extends ApplicationEvent {
 
 	private final String requestId;
 
-	public MessageEvent(final String requestId, final ResponseMessage source) {
+	public MessageEvent(final String requestId, final TeamAvro source) {
 		super(source);
 		this.requestId = requestId;
 	}
@@ -17,8 +17,8 @@ public class MessageEvent extends ApplicationEvent {
 		return requestId;
 	}
 	
-	public ResponseMessage getResponse() {
-		return super.getSource() != null ? (ResponseMessage) super.getSource() : null;
+	public TeamAvro getResponse() {
+		return super.getSource() != null ? (TeamAvro) super.getSource() : null;
 	}
 
 	private static final long serialVersionUID = 8366022661649087L;

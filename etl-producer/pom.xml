@@ -211,6 +211,7 @@
 	                        <goal>schema</goal>
 	                    </goals>
 	                    <configuration>
+	                    	<createSetters>false</createSetters>
 							<sourceDirectory>src/main/resources/avro</sourceDirectory>
 							<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
 	                        <stringType>String</stringType>
@@ -221,6 +222,41 @@
 	            </executions>
 	        </plugin>	        
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.avro
+										</groupId>
+										<artifactId>
+											avro-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.8.2,)
+										</versionRange>
+										<goals>
+											<goal>schema</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>

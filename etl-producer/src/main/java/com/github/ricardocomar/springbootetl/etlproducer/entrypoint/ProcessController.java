@@ -15,8 +15,7 @@ import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.Proces
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.ConcurrentProcessor;
-import com.github.ricardocomar.springbootetl.model.RequestMessage;
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
+import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 @RestController
 public class ProcessController {
@@ -35,14 +34,12 @@ public class ProcessController {
 		final long start = System.currentTimeMillis();
 
 		try {
-			final RequestMessage requestMessage = RequestMessage.builder().id(request.getId())
-					.payload(request.getPayload()).build();
+			final TeamAvro response = processor.handle(request);
 
-			final ResponseMessage response = processor.handle(requestMessage);
-
-			return (!StringUtils.isEmpty(response.getTeamName()) ? ResponseEntity.ok()
-					: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR))
-							.body(ProcessResponse.builder().id(request.getId()).payload(request.getPayload())
+			return (StringUtils.isEmpty(response.getTeamName())
+					? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					: ResponseEntity.ok())
+							.body(ProcessResponse.builder().id(request.getId()).response(response)
 									.duration(System.currentTimeMillis() - start).build());
 
 		} catch (final UnavailableResponseException e) {

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
-import com.github.ricardocomar.springbootetl.model.ResponseMessage;
+import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 @Component
 public class ResponseConsumer {
@@ -27,7 +27,7 @@ public class ResponseConsumer {
 	private ApplicationContext appContext;
 
 	@KafkaListener(topics = "topicOutbound", groupId = "producer-${random.value}")
-	public void consumeResponse(@Payload final ResponseMessage message,
+	public void consumeResponse(@Payload final TeamAvro message,
 			@Header(required = false, name = AppProperties.HEADER_REQUEST_ID) final String requestId)
 			throws Exception {
 
