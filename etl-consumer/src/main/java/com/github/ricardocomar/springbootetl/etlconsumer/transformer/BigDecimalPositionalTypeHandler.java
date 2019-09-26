@@ -18,12 +18,22 @@ public class BigDecimalPositionalTypeHandler implements TypeHandler, Configurabl
 
 	@Override
 	public Object parse(final String text) {
+		if (text.length() > precision) {
+			throw new IllegalArgumentException(
+					text + " length (" + text.length() + ") is greater than configured precision " + precision);
+		}
 		return new java.math.BigDecimal(text.substring(0, Math.min(precision, text.length()))).movePointLeft(scale).setScale(scale);
 	}
 
 	@Override
-	public String format(final Object value) {
-		final String tmp = String.format("%01.0f", ((BigDecimal) value).movePointRight(scale));
+	public String format(final Object input) {
+		final BigDecimal value = (BigDecimal) input;
+		if (value.precision() > precision) {
+			throw new IllegalArgumentException(
+					value + " precision (" + value.precision() + ") is greater than configured precision " + precision);
+		}
+
+		final String tmp = String.format("%01.0f", value.movePointRight(scale));
 		return tmp.substring(0, Math.min(precision, tmp.length()));
 	}
 
