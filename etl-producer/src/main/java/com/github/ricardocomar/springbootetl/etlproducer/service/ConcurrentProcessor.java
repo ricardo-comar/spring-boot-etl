@@ -82,14 +82,12 @@ public class ConcurrentProcessor {
 			throw new UnavailableResponseException("No response for id " + requestId);
 		}
 		
-		responseAvro.getEmployees().stream().filter(emp -> emp != null)
+		final Team response = Team.builder().teamName(responseAvro.getTeamName())
+				.employees(responseAvro.getEmployees().stream().filter(emp -> emp != null)
 				.map(emp -> Team.Employee.builder().firstName(emp.getFirstName()).lastName(emp.getLastName())
 						.title(emp.getTitle()).hireDate(emp.getHireDate()).salary(emp.getSalary())
 						.status(EmployeeStatus.valueOf(emp.getStatus().name())).build())
-				.collect(Collectors.toList());
-
-		final Team response = Team.builder().teamName(responseAvro.getTeamName()).employees(null
-
+						.collect(Collectors.toList())
 				).build();
 		
 		LOGGER.debug("Returning response for id ({}) = {}", requestId, response);
@@ -105,9 +103,9 @@ public class ConcurrentProcessor {
 			return;
 		}
 
-		final TeamAvro response = event.getResponse();
 		final ProcessRequest request = lockMap.remove(requestId);
 		synchronized (request) {
+			final TeamAvro response = event.getResponse();
 			LOGGER.debug("Response is being saved for id {}, lock will be released for payload {}", requestId, request);
 			responseMap.put(requestId, response);
 

@@ -2,6 +2,9 @@ package com.github.ricardocomar.springbootetl.etlconsumer.processor;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.UUID;
+
+import org.apache.avro.generic.GenericRecord;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,19 +46,21 @@ public class MessageProcessorTest {
 	@Test
 	public void testValid() throws Exception {
 
-		Mockito.doAnswer((Answer<?>) invocation -> {
-			final TeamAvro arg0 = invocation.getArgument(0);
-			final TeamAvro team = Fixture.from(TeamAvro.class).gimme("valid");
-			team.setEmployees(Fixture.from(EmployeeAvro.class).gimme(3, "boss", "dev1", "dev2"));
+		final String requestId = UUID.randomUUID().toString();
+		final TeamAvro team = Fixture.from(TeamAvro.class).gimme("valid");
+		team.setEmployees(Fixture.from(EmployeeAvro.class).gimme(3, "boss", "dev1", "dev2"));
 
-			assertEquals(team, arg0);
+		Mockito.doAnswer((Answer<?>) invocation -> {
+			assertEquals(team, invocation.getArgument(0));
+			assertEquals(requestId, invocation.getArgument(1));
 			return null;
-		}).when(mockProducer).sendMessage(Mockito.any());
+		}).when(mockProducer).sendMessage(Mockito.any(GenericRecord.class), Mockito.anyString());
 
 		final RequestMessage requestMessage = Fixture.from(RequestMessage.class).gimme("valid");
-		processor.process(requestMessage.getTrancode());
+		processor.process(requestMessage.getTrancode(), requestId);
 
-		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any());
+		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any(GenericRecord.class),
+				Mockito.anyString());
 
 	}
 }
