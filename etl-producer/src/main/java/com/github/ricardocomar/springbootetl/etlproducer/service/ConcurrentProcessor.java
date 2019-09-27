@@ -3,6 +3,7 @@ package com.github.ricardocomar.springbootetl.etlproducer.service;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
+import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
+import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team.Employee.EmployeeStatus;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
@@ -36,7 +39,7 @@ public class ConcurrentProcessor {
 	private final Map<String, ProcessRequest> lockMap = new ConcurrentHashMap<>();
 	private final Map<String, TeamAvro> responseMap = new ConcurrentHashMap<>();
 
-	public TeamAvro handle(final ProcessRequest request) throws UnavailableResponseException {
+	public Team handle(final ProcessRequest request) throws UnavailableResponseException {
 
 		LOGGER.debug("Message to be processed: {}", request);
 		final String requestId = UUID.randomUUID().toString();
@@ -48,20 +51,22 @@ public class ConcurrentProcessor {
 
 		lockMap.put(requestId, request);
 
-		try {
-			jmsTemplate.convertAndSend("queue.sample", request.getPayload(), new MessagePostProcessor() {
-				@Override
-				public Message postProcessMessage(final Message message) throws JMSException {
-					message.setStringProperty(AppProperties.HEADER_REQUEST_ID, requestId);
-					return message;
-				}
-			});
-
-		} catch (final JmsException e) {
-			LOGGER.error("Error sending message", e);
-		}
 
 		synchronized (request) {
+			try {
+				jmsTemplate.convertAndSend("queue.sample", request.getPayload(), new MessagePostProcessor() {
+					@Override
+					public Message postProcessMessage(final Message message) throws JMSException {
+						message.setStringProperty(AppProperties.HEADER_REQUEST_ID, requestId);
+						return message;
+					}
+				});
+
+			} catch (final JmsException e) {
+				LOGGER.error("Error sending message", e);
+				return null;
+			}
+
 			try {
 				request.wait(appProps.getConcurrentProcessor().getWaitTimeout());
 				LOGGER.debug("Lock released for message {}", requestId);
@@ -72,11 +77,21 @@ public class ConcurrentProcessor {
 			}
 		}
 
-		final TeamAvro response = responseMap.remove(requestId);
-		if (response == null) {
+		final TeamAvro responseAvro = responseMap.remove(requestId);
+		if (responseAvro == null) {
 			throw new UnavailableResponseException("No response for id " + requestId);
 		}
+		
+		responseAvro.getEmployees().stream().filter(emp -> emp != null)
+				.map(emp -> Team.Employee.builder().firstName(emp.getFirstName()).lastName(emp.getLastName())
+						.title(emp.getTitle()).hireDate(emp.getHireDate()).salary(emp.getSalary())
+						.status(EmployeeStatus.valueOf(emp.getStatus().name())).build())
+				.collect(Collectors.toList());
 
+		final Team response = Team.builder().teamName(responseAvro.getTeamName()).employees(null
+
+				).build();
+		
 		LOGGER.debug("Returning response for id ({}) = {}", requestId, response);
 		return response;
 

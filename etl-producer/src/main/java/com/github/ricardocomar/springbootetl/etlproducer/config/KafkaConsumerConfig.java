@@ -1,21 +1,18 @@
 package com.github.ricardocomar.springbootetl.etlproducer.config;
 
-import java.io.Serializable;
-
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.RecordInterceptor;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-
-import springfox.documentation.service.ResponseMessage;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -24,19 +21,17 @@ public class KafkaConsumerConfig {
 	private AppProperties appProps;
 
 	@Bean
-	public ConsumerFactory<String, Serializable> consumerFactory(
+	public ConsumerFactory<?, ?> consumerFactory(
 			@Autowired final KafkaProperties kafkaProps) {
-		final JsonDeserializer<Serializable> jsonDeserializer = new JsonDeserializer<>();
-		jsonDeserializer.addTrustedPackages("com.github.ricardocomar.springbootetl.model");
 		return new DefaultKafkaConsumerFactory<>(
-				kafkaProps.buildConsumerProperties(), new StringDeserializer(),
-				jsonDeserializer);
+				kafkaProps.buildConsumerProperties());
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, ResponseMessage> kafkaListenerContainerFactory(
-			final ConsumerFactory<String, ResponseMessage> consumerFactory) {
-		final ConcurrentKafkaListenerContainerFactory<String, ResponseMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, GenericRecord>> kafkaListenerContainerFactory(
+			@Autowired final ConsumerFactory<String, GenericRecord> consumerFactory) {
+		
+		final ConcurrentKafkaListenerContainerFactory<String, GenericRecord> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
 		factory.setRecordInterceptor(recordInterceptor());
 		factory.setConcurrency(appProps.getConsumer().getContainerFactory().getConcurrency());
@@ -48,13 +43,12 @@ public class KafkaConsumerConfig {
 		return factory;
 	}
 
-	private static RecordInterceptor<String, ResponseMessage> recordInterceptor() {
+	private static RecordInterceptor<String, GenericRecord> recordInterceptor() {
 
-		return new RecordInterceptor<String, ResponseMessage>() {
+		return new RecordInterceptor<String, GenericRecord>() {
 
 			@Override
-			public ConsumerRecord<String, ResponseMessage> intercept(
-					final ConsumerRecord<String, ResponseMessage> record) {
+			public ConsumerRecord<String, GenericRecord> intercept(final ConsumerRecord<String, GenericRecord> record) {
 
 				record.headers().headers(AppProperties.HEADER_CORRELATION_ID).forEach((h) -> {
 					MDC.put(AppProperties.PROP_CORRELATION_ID, new String(h.value()));

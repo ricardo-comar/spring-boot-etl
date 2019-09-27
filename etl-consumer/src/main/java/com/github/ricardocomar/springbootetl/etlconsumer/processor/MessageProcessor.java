@@ -31,7 +31,7 @@ public class MessageProcessor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageProcessor.class);
 
-	public void process(final String message) {
+	public void process(final String message, final String requestId) {
 		LOGGER.info("Processing message: {}", message);
 		
 		final Team teamTrancode = trancodeTransformer.from(message);
@@ -44,7 +44,7 @@ public class MessageProcessor {
 		LOGGER.info("Bean transformed into response: {}", teamAvro);
 
 		LOGGER.info("Sending bean to response topic");
-		producer.sendMessage(teamAvro);
+		producer.sendMessage(teamAvro, requestId);
 	}
 
 }

@@ -31,7 +31,8 @@ public class ResponseConsumer {
 			@Header(required = false, name = AppProperties.HEADER_REQUEST_ID) final String requestId)
 			throws Exception {
 
-		LOGGER.info("Received Message: {}", message);
+		LOGGER.debug("Received Message: {}", message);
+		LOGGER.debug("Received RequestId: {}", requestId);
 		
 		appContext.publishEvent(new MessageEvent(requestId, message));
 		

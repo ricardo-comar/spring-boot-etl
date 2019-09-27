@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse;
+import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.ConcurrentProcessor;
-import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 @RestController
 public class ProcessController {
@@ -34,9 +34,9 @@ public class ProcessController {
 		final long start = System.currentTimeMillis();
 
 		try {
-			final TeamAvro response = processor.handle(request);
+			final Team response = processor.handle(request);
 
-			return (StringUtils.isEmpty(response.getTeamName())
+			return (response == null || StringUtils.isEmpty(response.getTeamName())
 					? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					: ResponseEntity.ok())
 							.body(ProcessResponse.builder().id(request.getId()).response(response)

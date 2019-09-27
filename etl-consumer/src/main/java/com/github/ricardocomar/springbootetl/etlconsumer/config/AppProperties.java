@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @ConfigurationProperties(prefix = "etl-consumer")
 public class AppProperties {
 	
+	public static final String HEADER_REQUEST_ID = "X-Request-id";
 	public static final String HEADER_CORRELATION_ID = "X-Correlation-id";
 	public static final String PROP_CORRELATION_ID = "correlationId";
 
