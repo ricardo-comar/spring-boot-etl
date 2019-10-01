@@ -29,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
+import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
 import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
@@ -137,7 +138,7 @@ public class ConcurrentProcessorTest {
 			@Override
 			public void run() {
 				try {
-					final TeamAvro resp = processor.handle(request);
+					final Team resp = processor.handle(request);
 					response.setTeamName(resp.getTeamName());
 				} catch (final UnavailableResponseException e) {
 					e.printStackTrace();

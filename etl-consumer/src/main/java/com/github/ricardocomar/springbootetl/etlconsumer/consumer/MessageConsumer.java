@@ -1,5 +1,7 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.consumer;
 
+import java.util.Random;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ public class MessageConsumer {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MessageConsumer.class);
 
+	private static final Random RANDOM = new Random();
+
 	@Autowired
 	private MessageProcessor processor;
 
@@ -24,6 +28,12 @@ public class MessageConsumer {
 
 		try {
 			LOGGER.info("Received Message, will be processed ({})", message);
+			try {
+				Thread.sleep(50 + RANDOM.nextInt(50));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			processor.process(message, requestId);
 		} catch (final Exception e) {
 			LOGGER.error("Error processing message", e);

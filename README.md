@@ -3,23 +3,22 @@
 
 ## Release Notes
 
-* **2019-09-06**: First version, all working just fine but without documentation :smile: 
-* **2019-09-11**: This documentatio, plus callbackRatio and processingRatio parameters and behaviours.
-* **2019-09-13**: Database persistence with transaction isolation in two steps (message receive and end processing)
+* **2019-09-28**: First version, all working just fine, but documentation :smile: 
+* **2019-10-01**: This documentation
 
 # Study Case
 
 ## The Scenario
 
-In a recent case (september/2019) I helped to analise a scenario where an application, responsible to "proccess some stuff", was configured to have instances grouped by two consumer groups, one for the producers and other for the consumers, like the diagram below.
+In a recent case (september/2019) I helped to analise a scenario where an application, responsible to "transform some data", had to be a simple but powerfull ETL (Extract, transform, load), from a message as fixed lenth fields to a metadata JSON (validated).
 
-The producer had an endpoint REST, to receive a request, transform into a Message, send to a Inbound topic in Kafka, and keep the request alive until other message came from the Outbound topic, to reply the response.
+To test this scenario, I "borrowed" another project I just made (https://github.com/ricardo-comar/kafka-balanced-consumers) to simplify the tests, acting as a "producer" and response time analyser. 
 
-By security reasons, every instance connected to kafka had to be on a Consumer Group.
+The producer has an endpoint REST, to receive a request, transform into a Message, send to a Inbound queue in ActiveMQ, and keep the request alive until other message came from the Kafka topic, to reply the response.
 
-For a consumer vision it's the best scenario, as one message must be read by **only one consummer**. But, for the producer it's not a good choice, because the Outbound message can be read by the wrong Producer, as it's represented by the red arrows on the diagram below.  
 ![](img/architecture.png)
-A workaround was done, by calling an "internal" callback to send the response to the correct producer, and reply the awaiting request.
+
+A request controll was done, by using a custom header with a UUID  identifying the request, and replyed also on a custom header inside the response, to release the REST lock and replying it.
 
 ## Simulating 
 
@@ -28,23 +27,20 @@ A workaround was done, by calling an "internal" callback to send the response to
 * **Load Balancer (border-service)**: A simple Spring Boot instance, set up to provide a load balance with zool, eureka and Hystrix.
 * **Producer (kafka-producer)**: The Producer instance, provided by Spring Boot Web with two endpoints. The first receives a message with this payload below, and answers a HTTP 200 payload on success:
 ```
-{
+{ 
     "id": "ABC", //Unique ID for each request
-    "durationMin": 100, //Optional, minimal processing time to be emulated by the consumer
-    "durationMax": 500, //Optional, maximal processing time to be emulated by the consumer
-    "processingRate": 1.0, //Optional, success rate of processing the message (between 0 and 1)
-    "callbackRate": 1.0 //Optional, success rate of repassing the message to the correct sender (between 0 and 1)
+    "payload": "Team ABC  Jown        Snow      Boss           1200010   26092009ACTIVE    " // Sample payload
 }
 ```
 ```
 {
     "id": "ABC",
     "responseId": "a008fe76-55ae-4aee-8a87-e6cfb81ff17a", //Randomic UUID
-    "duration": 148 //Randomic Processing Spent time  
+    "duration": 148 //Total Processing Spent time  
 }
 ```
 * **Consumer (kafka-consumer)**: The Producer instance, provided by Spring Boot Batch with a consumer connected to a Kafka Topic (topicInbound) to receive the request messages, sleep some time between the *durationMin* and *durationMax* parameters, generate a Randomic UUID and reply to other topic (topicOutbound)
-* **Load Test (main folder)**: [load test](blob/a47fae83052f37f3f18fc79eef6280b753236e30/src/test/scala/producer/ProducerLoadTest.scala#L9) using [Gatling](https://gatling.io/), a very powerfull, flexible and light tool, with the desired scenarios and simultaneous users.
+* **Load Test (main folder)**: [load test]src/test/scala/producer/ProducerLoadTest.scala#L9) using [Gatling](https://gatling.io/), a very powerfull, flexible and light tool, with the desired scenarios and simultaneous users.
 
 ## Improving the solution
 
@@ -67,34 +63,34 @@ we emulated the original cenario by:
 
 * **Analisys**: As observed on the results below, the *Unique Consumer Group* approach has a ~40% better performance, because the return message is consumed by the correct producer and replyed by the API, and we don't have  
 * Statistics
-  * Same Consumer Group  
-![Statistics](img/group_1_statistics.png)
-  * Unique Consumer Group  
-![Statistics](img/unique_1_statistics.png)
+  * Single Consumer  
+![Statistics](img/stats-1.png)
+  * Three Consumers  
+![Statistics](img/stats-3.png)
 
 * Response Time Distribution
-  * Same Consumer Group  
-![Statistics](img/group_2_distribution.png)
-  * Unique Consumer Group  
-![Statistics](img/unique_2_distribution.png)
+  * Single Consumer  
+![Statistics](img/rtd-1.png)
+  * Three Consumers  
+![Statistics](img/rtd-3.png)
 
 * Response Time Percentiles over Time
-  * Same Consumer Group  
-![Statistics](img/group_3_resp_perc.png)
-  * Unique Consumer Group  
-![Statistics](img/unique_3_resp_perc.png)
+  * Single Consumer  
+![Statistics](img/rtp-1.png)
+  * Three Consumers  
+![Statistics](img/rtp-3.png)
 
 * Requests Per Second
-  * Same Consumer Group  
-![Statistics](img/group_4_req_sec.png)
-  * Unique Consumer Group  
-![Statistics](img/unique_4_req_sec.png)
+  * Single Consumer  
+![Statistics](img/reqps-1.png)
+  * Three Consumers  
+![Statistics](img/reqps-3.png)
 
 * Responses Per Second
-  * Same Consumer Group  
-![Statistics](img/group_5_resp_sec.png)
-  * Unique Consumer Group  
-![Statistics](img/unique_5_resp_sec.png)
+  * Single Consumer  
+![Statistics](img/resps-1.png)
+  * Three Consumers  
+![Statistics](img/resps-3.png)
 
 # Let's Play !!
 
@@ -205,10 +201,8 @@ You will be able to monitor the progress, with a few informations about the succ
 * https://better-coding.com/building-apache-kafka-cluster-using-docker-compose-and-virtualbox/
 * https://spring.io/guides/gs/rest-service/
 * https://github.com/edenhill/kafkacat
-* https://dzone.com/articles/magic-of-kafka-with-spring-boot
 * https://www.baeldung.com/spring-kafka
 * https://docs.spring.io/spring-kafka/reference/html/#kafka
-* https://thepracticaldeveloper.com/2018/11/24/spring-boot-kafka-config/
 * https://dzone.com/articles/20-best-practices-for-working-with-apache-kafka-at
 * https://www.baeldung.com/java-concurrent-locks
 * https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html
@@ -220,3 +214,4 @@ You will be able to monitor the progress, with a few informations about the succ
 * https://www.confluent.io/blog/schema-registry-avro-in-spring-boot-application-tutorial
 * https://msayag.github.io/Kafka/
 * https://memorynotfound.com/spring-kafka-adding-custom-header-kafka-message-example/
+* https://developer.ibm.com/tutorials/mq-jms-application-development-with-spring-boot/

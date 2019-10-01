@@ -19,7 +19,7 @@
 		<appender-ref ref="CONSOLE" />
 	</root>
 	<logger name="com.github.ricardocomar" additivity="false" level="INFO">
-		<appender-ref ref="splunk" />
+<!-- 		<appender-ref ref="splunk" /> -->
 		<appender-ref ref="CONSOLE" />
 	</logger>
 

@@ -1,5 +1,6 @@
 { 
     "id":"${requestId}", 
-    "durationMin": ${delayMin}, 
-    "durationMax": ${delayMax}
+    "payload": "Team ABC  Jown        Snow      Boss           1200010   26092009ACTIVE    "
 }
+
+

@@ -15,7 +15,7 @@ object ProducerRequest {
     .check(
       status.is(200), 
       jsonPath("$.id").is("${requestId}"),
-      jsonPath("$.responseId").exists,
+      jsonPath("$.response").exists,
       jsonPath("$.duration").exists
     )
 
