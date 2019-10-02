@@ -9,9 +9,12 @@ eureka:
       defaultZone: ${EUREKA_URI:http://localhost:8080/eureka}
   instance:
     appname: etl-consumer
-    instance-id: beanio-consumer-${random.value}
+    instance-id: etl-consumer-${random.value}
 
 spring:
+  profiles:
+    include:
+    - sp-int
   application:
     name: etl-consumer
   activemq:

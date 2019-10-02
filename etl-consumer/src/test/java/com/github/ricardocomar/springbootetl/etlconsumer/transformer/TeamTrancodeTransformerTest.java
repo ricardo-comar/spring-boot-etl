@@ -1,7 +1,7 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.transformer;
 
-import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
@@ -38,7 +38,7 @@ public class TeamTrancodeTransformerTest {
 		trancodeTeam.setEmployees(Fixture.from(Employee.class).gimme(3, "boss", "dev1", "dev2"));
 
 		final String trancode = transformer.to(trancodeTeam);
-		assertThat(trancode, not(emptyOrNullString()));
+		assertThat(trancode, not(isEmptyOrNullString()));
 
 		final Team newTrancode = transformer.from(trancode);
 
