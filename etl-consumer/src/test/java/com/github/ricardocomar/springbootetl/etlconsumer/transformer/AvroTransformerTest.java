@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,18 +14,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamTrancodeFixture;
 import com.github.ricardocomar.springbootetl.etlconsumer.mapper.MapperSpringConfig;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.ConsumerModel;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
-import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TransformerSpringConfig.class, MapperSpringConfig.class })
-public class TeamAvroTransformerTest {
+public class AvroTransformerTest {
 
 	@Autowired
-	private TeamAvroTransformer transformer;
+	private AvroTransformer transformer;
 
 	@BeforeClass
 	public static void setUp() {
@@ -32,14 +33,14 @@ public class TeamAvroTransformerTest {
 	}
 
 	@Test
-	public void testValid() throws Exception {
+	public void testValidTeam() throws Exception {
 		
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
 
-		final TeamAvro avro = transformer.from(trancodeTeam);
+		final SpecificRecord avro = transformer.from(trancodeTeam);
 		assertThat(avro, notNullValue());
 
-		final Team newTrancode = transformer.to(avro);
+		final ConsumerModel newTrancode = transformer.to(avro);
 
 		assertThat(newTrancode, equalTo(trancodeTeam));
 	}

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Team {
+public class Team implements ConsumerModel {
 	
 	@Field(ordinal = 0, length = 10)
 	private String teamName;

@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 import com.github.ricardocomar.springbootetl.etlconsumer.producer.ReturnProducer;
-import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamAvroTransformer;
-import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamTrancodeTransformer;
+import com.github.ricardocomar.springbootetl.etlconsumer.transformer.AvroTransformer;
+import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TrancodeTransformer;
 import com.github.ricardocomar.springbootetl.etlconsumer.validation.ValidatorTeam;
-import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.fluentvalidator.context.ValidationResult;
 
@@ -18,10 +17,10 @@ import br.com.fluentvalidator.context.ValidationResult;
 public class MessageProcessor {
 
 	@Autowired
-	private TeamTrancodeTransformer trancodeTransformer;
+	private TrancodeTransformer trancodeTransformer;
 
 	@Autowired
-	private TeamAvroTransformer avroTransformer;
+	private AvroTransformer avroTransformer;
 
 	@Autowired
 	private ValidatorTeam validatorTeam;
@@ -40,11 +39,11 @@ public class MessageProcessor {
 		final ValidationResult validationResult = validatorTeam.validate(teamTrancode);
 		LOGGER.info("Validation result: {}", validationResult);
 		
-		final TeamAvro teamAvro = avroTransformer.from(teamTrancode);
-		LOGGER.info("Bean transformed into response: {}", teamAvro);
-
-		LOGGER.info("Sending bean to response topic");
-		producer.sendMessage(teamAvro, requestId);
+//		final TeamAvro teamAvro = avroTransformer.from(teamTrancode);
+//		LOGGER.info("Bean transformed into response: {}", teamAvro);
+//
+//		LOGGER.info("Sending bean to response topic");
+//		producer.sendMessage(teamAvro, requestId);
 	}
 
 }

@@ -54,7 +54,7 @@ public class MessageProcessorTest {
 			return null;
 		}).when(mockProducer).sendMessage(Mockito.any(GenericRecord.class), Mockito.anyString());
 
-		final RequestMessage requestMessage = Fixture.from(RequestMessage.class).gimme("valid");
+		final RequestMessage requestMessage = Fixture.from(RequestMessage.class).gimme("team");
 		processor.process(requestMessage.getTrancode(), requestId);
 
 		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any(GenericRecord.class),

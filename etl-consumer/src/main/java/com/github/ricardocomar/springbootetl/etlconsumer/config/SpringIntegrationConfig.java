@@ -3,6 +3,7 @@ package com.github.ricardocomar.springbootetl.etlconsumer.config;
 import javax.jms.ConnectionFactory;
 
 import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,11 +18,10 @@ import org.springframework.jms.support.converter.MessagingMessageConverter;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.MessageHandler;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
-import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamAvroTransformer;
-import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TeamTrancodeTransformer;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.ConsumerModel;
+import com.github.ricardocomar.springbootetl.etlconsumer.transformer.AvroTransformer;
+import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TrancodeTransformer;
 import com.github.ricardocomar.springbootetl.etlconsumer.validation.ValidatorTeam;
-import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 @Profile("sp-int")
 @Configuration
@@ -29,10 +29,10 @@ import com.github.ricardocomar.springbootetl.model.TeamAvro;
 public class SpringIntegrationConfig {
 
 	@Autowired
-	private TeamAvroTransformer avroTransformer;
+	private AvroTransformer avroTransformer;
 
 	@Autowired
-	private TeamTrancodeTransformer trancodeTransformer;
+	private TrancodeTransformer trancodeTransformer;
 
 	@Autowired
 	private ValidatorTeam validatorTeam;
@@ -48,14 +48,14 @@ public class SpringIntegrationConfig {
 	}
 
 	@Transformer(inputChannel = "jmsInboundChannel", outputChannel = "avroTransformerChannel")
-	public Team fromPayloadToTeam(final String payload) {
-		final Team team = trancodeTransformer.from(payload);
-		validatorTeam.validate(team);
-		return team;
+	public ConsumerModel fromPayloadToTeam(final String payload) {
+		final ConsumerModel model = trancodeTransformer.from(payload);
+//		validatorTeam.validate(model);
+		return model;
 	}
 
 	@Transformer(inputChannel = "avroTransformerChannel", outputChannel = "kafkaOutboundChannel")
-	public TeamAvro fromTeamToTeamAvro(final Team team) {
+	public SpecificRecord fromTeamToTeamAvro(final ConsumerModel team) {
 		return avroTransformer.from(team);
 	}
 

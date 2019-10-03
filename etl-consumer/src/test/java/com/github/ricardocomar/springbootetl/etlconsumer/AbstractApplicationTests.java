@@ -59,7 +59,7 @@ public abstract class AbstractApplicationTests {
 		RESPONSE_AVRO = null;
 		RESPONSE_REQUEST_ID = null;
 
-		final RequestMessage msg = Fixture.from(RequestMessage.class).gimme("valid");
+		final RequestMessage msg = Fixture.from(RequestMessage.class).gimme("team");
 		final TeamAvro teamAvro = Fixture.from(TeamAvro.class).gimme("valid");
 		final String requestId = UUID.randomUUID().toString();
 

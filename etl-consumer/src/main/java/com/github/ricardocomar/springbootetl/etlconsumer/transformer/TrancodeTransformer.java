@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 @Component
-public class TeamTrancodeTransformer {
+public class TrancodeTransformer {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TeamTrancodeTransformer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TrancodeTransformer.class);
 
 	private final Unmarshaller unmarsh;
 	private final Marshaller marsh;
 
-	public TeamTrancodeTransformer() {
+	public TrancodeTransformer() {
 
 		LOGGER.debug("Creating BeanIO Unmarshallers and Marshallers");
 

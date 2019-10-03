@@ -23,7 +23,7 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 public class TeamTrancodeTransformerTest {
 
 	@Autowired
-	private TeamTrancodeTransformer transformer;
+	private TrancodeTransformer transformer;
 
 	@BeforeClass
 	public static void setUp() {

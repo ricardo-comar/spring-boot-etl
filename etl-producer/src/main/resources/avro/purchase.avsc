@@ -1,0 +1,24 @@
+{
+  "namespace": "com.github.ricardocomar.springbootetl.model",
+  "type": "record",
+  "name": "PurchaseAvro",
+  "fields": [
+    {"name": "id", "type": "string", "avro.java.string": "String"},
+    {"name": "customer", "type": "string", "avro.java.string": "String"},
+    {"name": "totalValue", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2 } },
+    {"name": "status", "type": { "type": "enum", "name": "PurchaseAvroStatus", "symbols": ["OPEN", "PAID", "CANCELLED", "RETURNED", "DELIVERED"] } },
+    {"name": "date", "type":"string", "avro.java.string": "String"},
+    {"name": "items", 
+      "type":{"type": "array",  
+        "items":{"name":"PurchaseItemAvro", "type":"record",
+          "fields":[
+            {"name":"id", "type":"string", "avro.java.string": "String"},
+            {"name":"sku", "type":"string", "avro.java.string": "String"},
+            {"name":"title", "type":"string", "avro.java.string": "String"},
+            {"name":"value", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2 } }
+          ]
+        }
+      }
+    }
+  ]  
+}
