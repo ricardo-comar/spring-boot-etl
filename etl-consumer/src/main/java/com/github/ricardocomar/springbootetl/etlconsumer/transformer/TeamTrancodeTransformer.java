@@ -24,7 +24,7 @@ public class TeamTrancodeTransformer {
 
 	public TeamTrancodeTransformer() {
 
-		LOGGER.debug("Creating BeanIO Unmarshaller and Marshaller");
+		LOGGER.debug("Creating BeanIO Unmarshallers and Marshallers");
 
 		final StreamBuilder builder = new StreamBuilder("TeamTrancode").format("fixedlength")
 				.addTypeHandler(LocalDate.class, new LocalDateTypeHandler("yyyyMMdd"))
