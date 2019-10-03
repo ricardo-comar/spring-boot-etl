@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
@@ -24,9 +23,6 @@ public class ProcessController {
 
 	@Autowired
 	private ConcurrentProcessor processor;
-
-	@Autowired
-	private AppProperties appProps;
 
 	@PostMapping(value = "/process")
 	public ResponseEntity<ProcessResponse> process(@RequestBody final ProcessRequest request) {

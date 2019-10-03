@@ -3,7 +3,6 @@
 	<include
 		resource="org/springframework/boot/logging/logback/base.xml" />
 
-<!-- 	
 	<appender name="splunk" class="com.splunk.logging.TcpAppender">
 		<RemoteHost>127.0.0.1</RemoteHost>
 		<Port>1514</Port>
@@ -16,15 +15,12 @@
 			</jsonFormatter>
 		</layout>
 	</appender>
--->
 
-	<root level="INFO">
-		<appender-ref ref="CONSOLE" />
-	</root>
-<!-- 	
+	<root level="INFO"/>
+
     <logger name="com.github.ricardocomar.springbootetl" additivity="false" level="INFO">
 		<appender-ref ref="splunk" />
+		<appender-ref ref="CONSOLE" />
 	</logger> 
--->
 
 </configuration>

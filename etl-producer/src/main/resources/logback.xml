@@ -15,11 +15,10 @@
 		</layout>
 	</appender>
 	
-	<root level="INFO">
-		<appender-ref ref="CONSOLE" />
-	</root>
+	<root level="INFO"/>
+
 	<logger name="com.github.ricardocomar" additivity="false" level="INFO">
-<!-- 		<appender-ref ref="splunk" /> -->
+ 		<appender-ref ref="splunk" />
 		<appender-ref ref="CONSOLE" />
 	</logger>
 
