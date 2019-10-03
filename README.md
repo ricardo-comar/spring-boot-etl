@@ -5,6 +5,7 @@
 
 * **2019-09-28**: First version, all working just fine, but documentation :smile: 
 * **2019-10-01**: This documentation
+* **2019-10-03**: Consumer integration tests with embedded kafka, activemq and mock schema registry
 
 # Study Case
 
