@@ -85,14 +85,11 @@ public class ConcurrentProcessorTest {
 		final TeamAvro response = buildTeamAvro("Team NotUpdated");
 		final TeamAvro expected = buildTeamAvro("Team OK");
 
-		System.err.println("release - requestId=" + requestId);
 		new Thread(runnable(ProcessRequest.builder().payload("testRelease").build(), response)).start();
 		sleep(50);
 
-		System.err.println("release - requestId=" + requestId);
 		appContext.publishEvent(new MessageEvent(requestId, expected));
 		sleep(50);
-		System.err.println("release - requestId=" + requestId);
 
 		assertThat(response, Matchers.equalTo(expected));
 	}
@@ -101,10 +98,8 @@ public class ConcurrentProcessorTest {
 	public void testTimeout() {
 		final TeamAvro response = buildTeamAvro("Team XYZ");
 
-		System.err.println("timeout - requestId=" + requestId);
 		new Thread(runnable(ProcessRequest.builder().payload("testTimeout").build(), response)).start();
 		sleep(350);
-		System.err.println("timeout - requestId=" + requestId);
 
 		assertThat(response.getTeamName(), Matchers.equalTo("Team XYZ"));
 	}
@@ -117,16 +112,12 @@ public class ConcurrentProcessorTest {
 		final TeamAvro responseTimeout = buildTeamAvro("Team TimeOut");
 		final TeamAvro expectedTimeout = buildTeamAvro("Team TimeOut");
 
-		System.err.println("concurrent - requestId=" + requestId);
 		new Thread(runnable(ProcessRequest.builder().payload("testConcurrent-AAA").build(), responseSuccess)).start();
-		System.err.println("concurrent - requestId=" + requestId);
 		sleep(50);
 		appContext.publishEvent(new MessageEvent(requestId, expectedSuccess));
-		System.err.println("concurrent - requestId=" + requestId);
 
 		new Thread(runnable(ProcessRequest.builder().payload("testConcurrent-XXX").build(), responseTimeout)).start();
 		sleep(250);
-		System.err.println("concurrent - requestId=" + requestId);
 
 		assertThat(responseSuccess, Matchers.equalTo(expectedSuccess));
 		assertThat(responseTimeout, Matchers.equalTo(expectedTimeout));

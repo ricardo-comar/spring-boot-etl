@@ -1,12 +1,15 @@
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
 spring:
 
   kafka:
     consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.github.ricardocomar.springbootetl.etlconsumer.config.CustomKafkaAvroDeserializer
       bootstrap-servers: ${spring.embedded.kafka.brokers} 
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.github.ricardocomar.springbootetl.etlconsumer.config.CustomKafkaAvroSerializer
       bootstrap-servers: ${spring.embedded.kafka.brokers}
 
