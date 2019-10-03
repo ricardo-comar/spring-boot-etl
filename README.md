@@ -179,3 +179,6 @@ At the end a report will be generated, accessible by the provided path.
 * https://msayag.github.io/Kafka/
 * https://memorynotfound.com/spring-kafka-adding-custom-header-kafka-message-example/
 * https://developer.ibm.com/tutorials/mq-jms-application-development-with-spring-boot/
+* https://objectpartners.com/2018/08/21/testing-with-spring-kafka-and-mockschemaregistryclient/
+* https://memorynotfound.com/spring-boot-embedded-activemq-configuration-example/
+
