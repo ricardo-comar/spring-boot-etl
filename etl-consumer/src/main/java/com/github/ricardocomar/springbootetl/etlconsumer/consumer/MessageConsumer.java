@@ -28,12 +28,9 @@ public class MessageConsumer {
 	public void handle(final String message,
 			@Header(AppProperties.HEADER_REQUEST_ID) final String requestId) {
 
+		LOGGER.info("Received Message, will be processed ({})", message);
+
 		try {
-			LOGGER.info("Received Message, will be processed ({})", message);
-			try {
-				Thread.sleep(50 + RANDOM.nextInt(50));
-			} catch (final Exception e) {
-			}
 			processor.process(message, requestId);
 		} catch (final Exception e) {
 			LOGGER.error("Error processing message", e);

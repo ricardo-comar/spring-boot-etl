@@ -12,9 +12,9 @@ eureka:
     instance-id: etl-consumer-${random.value}
 
 spring:
-  profiles:
-    include:
-    - sp-int
+#  profiles:
+#    include:
+#    - sp-int
   application:
     name: etl-consumer
   activemq:

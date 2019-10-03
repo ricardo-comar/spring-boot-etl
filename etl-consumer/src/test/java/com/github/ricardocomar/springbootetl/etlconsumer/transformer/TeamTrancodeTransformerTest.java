@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamTrancodeFixture;
-import com.github.ricardocomar.springbootetl.etlconsumer.model.Employee;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -35,7 +34,6 @@ public class TeamTrancodeTransformerTest {
 	public void testValid() throws Exception {
 
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setEmployees(Fixture.from(Employee.class).gimme(3, "boss", "dev1", "dev2"));
 
 		final String trancode = transformer.to(trancodeTeam);
 		assertThat(trancode, not(isEmptyOrNullString()));

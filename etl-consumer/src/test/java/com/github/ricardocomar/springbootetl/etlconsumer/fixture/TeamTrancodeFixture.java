@@ -1,5 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.fixture;
 
+import com.github.ricardocomar.springbootetl.etlconsumer.model.Employee;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -13,6 +14,7 @@ public class TeamTrancodeFixture implements TemplateLoader {
 		Fixture.of(Team.class).addTemplate("valid", new Rule() {
 			{
 				add("teamName", "Team ABC");
+				add("employees", has(3).of(Employee.class, "boss", "dev1", "dev2"));
 			}
 		});
 

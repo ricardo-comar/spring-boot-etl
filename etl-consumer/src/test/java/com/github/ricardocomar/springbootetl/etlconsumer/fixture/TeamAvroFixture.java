@@ -1,5 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.fixture;
 
+import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -13,9 +14,9 @@ public class TeamAvroFixture implements TemplateLoader {
 		Fixture.of(TeamAvro.class).addTemplate("valid", new Rule() {
 			{
 				add("teamName", "Team ABC");
+				add("employees", has(3).of(EmployeeAvro.class, "boss", "dev1", "dev2"));
 			}
 		});
-
 	}
 
 }

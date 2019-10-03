@@ -31,7 +31,6 @@ public class TeamTrancodeValidationTest {
 	public void testValid() {
 
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setEmployees(Fixture.from(Employee.class).gimme(3, "boss", "dev1", "dev2"));
 
 		validator.validate(trancodeTeam);
 	}
@@ -49,6 +48,7 @@ public class TeamTrancodeValidationTest {
 	public void testEmptyEmployees() throws Exception {
 
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
+		trancodeTeam.setEmployees(null);
 
 		validator.validate(trancodeTeam);
 	}

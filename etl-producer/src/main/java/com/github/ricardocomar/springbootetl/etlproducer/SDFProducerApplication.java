@@ -14,7 +14,7 @@ import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 @EnableConfigurationProperties(AppProperties.class)
 public class SDFProducerApplication {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		SpringApplication.run(SDFProducerApplication.class, args);
 	}
 

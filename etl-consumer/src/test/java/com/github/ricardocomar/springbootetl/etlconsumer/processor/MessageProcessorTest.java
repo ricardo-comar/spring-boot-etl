@@ -21,7 +21,6 @@ import com.github.ricardocomar.springbootetl.etlconsumer.mapper.MapperSpringConf
 import com.github.ricardocomar.springbootetl.etlconsumer.producer.ReturnProducer;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TransformerSpringConfig;
 import com.github.ricardocomar.springbootetl.etlconsumer.validation.ValidationSpringConfig;
-import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -48,7 +47,6 @@ public class MessageProcessorTest {
 
 		final String requestId = UUID.randomUUID().toString();
 		final TeamAvro team = Fixture.from(TeamAvro.class).gimme("valid");
-		team.setEmployees(Fixture.from(EmployeeAvro.class).gimme(3, "boss", "dev1", "dev2"));
 
 		Mockito.doAnswer((Answer<?>) invocation -> {
 			assertEquals(team, invocation.getArgument(0));

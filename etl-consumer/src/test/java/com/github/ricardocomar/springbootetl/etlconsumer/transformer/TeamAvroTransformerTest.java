@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamTrancodeFixture;
 import com.github.ricardocomar.springbootetl.etlconsumer.mapper.MapperSpringConfig;
-import com.github.ricardocomar.springbootetl.etlconsumer.model.Employee;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
@@ -36,7 +35,6 @@ public class TeamAvroTransformerTest {
 	public void testValid() throws Exception {
 		
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setEmployees(Fixture.from(Employee.class).gimme(3, "boss", "dev1", "dev2"));
 
 		final TeamAvro avro = transformer.from(trancodeTeam);
 		assertThat(avro, notNullValue());
