@@ -3,23 +3,15 @@
   "type": "record",
   "name": "TeamAvro",
   "fields": [
-    {
-      "name": "teamName",
-      "type": "string",
-      "avro.java.string": "String"
-    },
-    {
-      "name":"employees",
-      "type":{
-        "type": "array",  
-        "items":{
-          "name":"EmployeeAvro",
-          "type":"record",
+    {"name": "teamName", "type": "string", "avro.java.string": "String"},
+    {"name":"employees", 
+      "type":{"type": "array",  
+        "items":{"name":"EmployeeAvro", "type":"record",
           "fields":[
             {"name":"firstName", "type":"string", "avro.java.string": "String"},
             {"name":"lastName", "type":"string", "avro.java.string": "String"},
             {"name":"title", "type":"string", "avro.java.string": "String"},
-            {"name":"salary", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 4, "scale": 2 } },
+            {"name":"salary", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 8, "scale": 2 } },
             {"name":"hireDate", "type":"string", "avro.java.string": "String"},
             {"name": "status", "type": { "type": "enum", "name": "EmployeeAvroStatus", "symbols": ["ACTIVE", "DISMISSED", "RESIGNED", "RETIRED"] } }
           ]
