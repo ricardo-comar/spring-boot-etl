@@ -1,6 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.config;
 
-import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +19,8 @@ public class KafkaProducerConfig {
 	}
 
 	@Bean
-	public KafkaTemplate<String, GenericRecord> kafkaTemplate(
-			@Autowired final ProducerFactory<String, GenericRecord> producerFactory) {
+	public KafkaTemplate<String, SpecificRecord> kafkaTemplate(
+			@Autowired final ProducerFactory<String, SpecificRecord> producerFactory) {
 		return new KafkaTemplate<>(producerFactory);
 	}
 }

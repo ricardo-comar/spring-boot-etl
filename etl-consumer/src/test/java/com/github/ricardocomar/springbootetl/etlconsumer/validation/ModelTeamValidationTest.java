@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamTrancodeFixture;
+import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamModelFixture;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Employee;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Team;
 
@@ -17,48 +17,48 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ValidationSpringConfig.class)
-public class TeamTrancodeValidationTest {
+public class ModelTeamValidationTest {
 
 	@Autowired
 	private ValidatorTeam validator;
 
 	@BeforeClass
 	public static void setUp() {
-		FixtureFactoryLoader.loadTemplates(TeamTrancodeFixture.class.getPackage().getName());
+		FixtureFactoryLoader.loadTemplates(TeamModelFixture.class.getPackage().getName());
 	}
 
 	@Test
 	public void testValid() {
 
-		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
+		final Team team = Fixture.from(Team.class).gimme("valid");
 
-		validator.validate(trancodeTeam);
+		validator.validate(team);
 	}
 
 	@Test(expected = ValidationException.class)
-	public void testEmptyTeamName() throws Exception {
+	public void testEmptyName() throws Exception {
 
-		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setTeamName(null);
+		final Team team = Fixture.from(Team.class).gimme("valid");
+		team.setTeamName(null);
 
-		validator.validate(trancodeTeam);
+		validator.validate(team);
 	}
 
 	@Test(expected = ValidationException.class)
 	public void testEmptyEmployees() throws Exception {
 
-		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setEmployees(null);
+		final Team team = Fixture.from(Team.class).gimme("valid");
+		team.setEmployees(null);
 
-		validator.validate(trancodeTeam);
+		validator.validate(team);
 	}
 
 	@Test(expected = ValidationException.class)
-	public void testOverloadedEmployees() throws Exception {
+	public void testOverfloadedEmployees() throws Exception {
 
-		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
-		trancodeTeam.setEmployees(Fixture.from(Employee.class).gimme(5, "boss"));
+		final Team team = Fixture.from(Team.class).gimme("valid");
+		team.setEmployees(Fixture.from(Employee.class).gimme(5, "boss"));
 
-		validator.validate(trancodeTeam);
+		validator.validate(team);
 	}
 }

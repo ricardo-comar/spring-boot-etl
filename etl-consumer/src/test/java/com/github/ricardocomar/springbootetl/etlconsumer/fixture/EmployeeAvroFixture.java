@@ -29,8 +29,6 @@ public class EmployeeAvroFixture implements TemplateLoader {
 				add("hireDate", LocalDate.now().minusYears(10).format(TIME_FORMATTER));
 			}
 		});
-
-		DateTimeFormatter.ofPattern("yyyy-MM-DD");
 		Fixture.of(EmployeeAvro.class).addTemplate("dev1", new Rule() {
 			{
 				add("title", "Developer 1");

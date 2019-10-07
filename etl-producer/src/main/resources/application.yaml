@@ -33,6 +33,8 @@ eureka:
 
 
 spring:
+  main:
+    banner-mode: "off"
   application:
     name: etl-producer
   activemq:

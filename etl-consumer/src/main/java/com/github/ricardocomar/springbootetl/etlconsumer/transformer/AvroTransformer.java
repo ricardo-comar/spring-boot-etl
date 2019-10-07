@@ -24,7 +24,9 @@ public class AvroTransformer {
 	public SpecificRecord from(final ConsumerModel input) {
 		LOGGER.debug("Transforming trancode into bean: {}", input);
 		
-		final ConsumerModelMapper<ConsumerModel> mapper = resolveMapper(input.getClass(), ConsumerModelMapper.class);
+		final ConsumerModelMapper<ConsumerModel> mapper = (ConsumerModelMapper<ConsumerModel>) ctx
+				.getBeanProvider(ResolvableType.forClassWithGenerics(ConsumerModelMapper.class, input.getClass()))
+				.getIfUnique();
 
 		final SpecificRecord output = mapper.fromModel(input);
 		LOGGER.debug("Resulted bean: {}", output);
@@ -36,7 +38,9 @@ public class AvroTransformer {
 	public ConsumerModel to(final SpecificRecord input) {
 		LOGGER.debug("Transforming avro into bean: {}", input);
 
-		final ConsumerAvroMapper<SpecificRecord> mapper = resolveMapper(input.getClass(), ConsumerAvroMapper.class);
+		final ConsumerAvroMapper<SpecificRecord> mapper = (ConsumerAvroMapper<SpecificRecord>) ctx
+				.getBeanProvider(ResolvableType.forClassWithGenerics(ConsumerAvroMapper.class, input.getClass()))
+				.getIfUnique();
 
 		final ConsumerModel output = mapper.fromAvro(input);
 		LOGGER.debug("Resulted bean: {}", output);
@@ -44,15 +48,4 @@ public class AvroTransformer {
 		return output;
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T> T resolveMapper(final Class<?> inputClass, final Class<T> mapperClass) {
-
-		final String[] beanNamesForType = ctx
-				.getBeanNamesForType(ResolvableType.forClassWithGenerics(mapperClass, inputClass));
-
-		final T mapper = (T) ctx
-				.getBean(beanNamesForType[0]);
-
-		return mapper;
-	}
 }

@@ -17,7 +17,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Team implements ConsumerModel {
+public class Team implements ConsumerMainModel {
+
+	@Field(ordinal = 0, length = 10)
+	private String transaction;
 	
 	@Field(ordinal = 0, length = 10)
 	private String teamName;

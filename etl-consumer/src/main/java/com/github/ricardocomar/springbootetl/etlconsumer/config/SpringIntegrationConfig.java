@@ -2,7 +2,6 @@ package com.github.ricardocomar.springbootetl.etlconsumer.config;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +20,7 @@ import org.springframework.messaging.MessageHandler;
 import com.github.ricardocomar.springbootetl.etlconsumer.model.ConsumerModel;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.AvroTransformer;
 import com.github.ricardocomar.springbootetl.etlconsumer.transformer.TrancodeTransformer;
-import com.github.ricardocomar.springbootetl.etlconsumer.validation.ValidatorTeam;
+import com.github.ricardocomar.springbootetl.etlconsumer.validation.ModelValidator;
 
 @Profile("sp-int")
 @Configuration
@@ -35,7 +34,7 @@ public class SpringIntegrationConfig {
 	private TrancodeTransformer trancodeTransformer;
 
 	@Autowired
-	private ValidatorTeam validatorTeam;
+	private ModelValidator modelValidator;
 
 	@Bean(destroyMethod = "destroy")
 	public JmsChannelFactoryBean jmsInboundChannel(final ConnectionFactory jmsConnFactory) {
@@ -49,8 +48,8 @@ public class SpringIntegrationConfig {
 
 	@Transformer(inputChannel = "jmsInboundChannel", outputChannel = "avroTransformerChannel")
 	public ConsumerModel fromPayloadToTeam(final String payload) {
-		final ConsumerModel model = trancodeTransformer.from(payload);
-//		validatorTeam.validate(model);
+		final ConsumerModel model = trancodeTransformer.fromTrancode(payload);
+		modelValidator.validate(model);
 		return model;
 	}
 
@@ -61,8 +60,8 @@ public class SpringIntegrationConfig {
 
 	@Bean
 	@ServiceActivator(inputChannel = "kafkaOutboundChannel")
-	public MessageHandler kafkaMessageHandler(final KafkaTemplate<String, GenericRecord> kafkaTemplate) {
-		final KafkaProducerMessageHandler<String, GenericRecord> handler = new KafkaProducerMessageHandler<>(
+	public MessageHandler kafkaMessageHandler(final KafkaTemplate<String, SpecificRecord> kafkaTemplate) {
+		final KafkaProducerMessageHandler<String, SpecificRecord> handler = new KafkaProducerMessageHandler<>(
 				kafkaTemplate);
 		handler.setTopicExpression(new LiteralExpression("topicOutbound"));
 		return handler;

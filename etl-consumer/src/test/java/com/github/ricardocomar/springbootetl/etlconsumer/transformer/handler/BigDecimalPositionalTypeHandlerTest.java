@@ -1,4 +1,4 @@
-package com.github.ricardocomar.springbootetl.etlconsumer.transformer;
+package com.github.ricardocomar.springbootetl.etlconsumer.transformer.handler;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.junit.Test;
+
+import com.github.ricardocomar.springbootetl.etlconsumer.transformer.handler.BigDecimalPositionalTypeHandler;
 
 public class BigDecimalPositionalTypeHandlerTest {
 

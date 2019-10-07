@@ -3,6 +3,7 @@
   "type": "record",
   "name": "TeamAvro",
   "fields": [
+    {"name": "transaction", "type": "string", "avro.java.string": "String"},
     {"name": "teamName", "type": "string", "avro.java.string": "String"},
     {"name":"employees", 
       "type":{"type": "array",  

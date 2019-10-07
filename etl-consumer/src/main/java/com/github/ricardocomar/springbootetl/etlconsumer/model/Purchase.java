@@ -19,8 +19,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Purchase implements ConsumerModel {
-	
+public class Purchase implements ConsumerMainModel {
+
+	@Field(ordinal = 0, length = 10)
+	private String transaction;
+
 	@Field(ordinal = 0, length = 12)
 	private String id;
 
@@ -41,6 +44,10 @@ public class Purchase implements ConsumerModel {
 
 	public enum PurchaseStatus {
 		OPEN, PAID, CANCELLED, RETURNED, DELIVERED;
+	}
+
+	public boolean isValidTotalValue() {
+		return totalValue.equals(items.stream().map(PurchaseItem::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
 	}
 
 }

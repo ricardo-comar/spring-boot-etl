@@ -23,7 +23,8 @@ public class RequestMessageFixture implements TemplateLoader {
 				add("id", UUID.randomUUID().toString());
 				add("origin", "TestSuite");
 				add("trancode",
-						"Team ABC  " + "Jown        Snow      Boss           1200010   " + hire1 + "ACTIVE    "
+						"TRANTEAM-1" + "Team ABC  " + "Jown        Snow      Boss           1200010   " + hire1
+								+ "ACTIVE    "
 								+ "Tyrion 1    Lannister Developer 1    900005    " + hire2 + "DISMISSED "
 								+ "Tyrion 2    Lannister Developer 2    800004    " + hire3 + "RESIGNED  ");
 			}
@@ -33,10 +34,11 @@ public class RequestMessageFixture implements TemplateLoader {
 				final String date = LocalDate.now().minusDays(10).format(TIME_FORMATTER);
 				add("id", UUID.randomUUID().toString());
 				add("origin", "TestSuite");
-//				add("trancode",
-//						"Team ABC  " + "Jown        Snow      Boss           1200010   " + hire1 + "ACTIVE    "
-//								+ "Tyrion 1    Lannister Developer 1    900005    " + hire2 + "DISMISSED "
-//								+ "Tyrion 2    Lannister Developer 2    800004    " + hire3 + "RESIGNED  ");
+				add("trancode",
+						"TRANPURC-1" + "purc-10     Lala Silva                    1590000   OPEN      " + date
+								+ "123-45-6    sku123456 Motorola G6 Play  50000     "
+								+ "654-32-1    sku654321 Iphone 10         390000    "
+								+ "999-99-9    sku999999 Iphone 11 Pro     1150000   ");
 			}
 		});
 

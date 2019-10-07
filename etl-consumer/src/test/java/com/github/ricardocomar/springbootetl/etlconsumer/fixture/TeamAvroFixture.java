@@ -13,6 +13,7 @@ public class TeamAvroFixture implements TemplateLoader {
 	public void load() {
 		Fixture.of(TeamAvro.class).addTemplate("valid", new Rule() {
 			{
+				add("transaction", "TRANTEAM-1");
 				add("teamName", "Team ABC");
 				add("employees", has(3).of(EmployeeAvro.class, "boss", "dev1", "dev2"));
 			}

@@ -3,6 +3,7 @@
   "type": "record",
   "name": "PurchaseAvro",
   "fields": [
+    {"name": "transaction", "type": "string", "avro.java.string": "String"},
     {"name": "id", "type": "string", "avro.java.string": "String"},
     {"name": "customer", "type": "string", "avro.java.string": "String"},
     {"name": "totalValue", "type":{ "type": "bytes", "logicalType": "decimal", "precision": 10, "scale": 2 } },

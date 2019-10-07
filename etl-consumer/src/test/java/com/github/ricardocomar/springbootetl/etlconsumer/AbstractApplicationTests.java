@@ -8,6 +8,9 @@ import java.util.UUID;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.apache.avro.specific.SpecificRecord;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -27,7 +30,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlconsumer.consumer.model.RequestMessage;
-import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamTrancodeFixture;
+import com.github.ricardocomar.springbootetl.etlconsumer.fixture.TeamModelFixture;
+import com.github.ricardocomar.springbootetl.model.PurchaseAvro;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -43,26 +47,50 @@ public abstract class AbstractApplicationTests {
 
 	@BeforeClass
 	public static void setUp() {
-		FixtureFactoryLoader.loadTemplates(TeamTrancodeFixture.class.getPackage().getName());
+		FixtureFactoryLoader.loadTemplates(TeamModelFixture.class.getPackage().getName());
 	}
 
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
-	private static TeamAvro RESPONSE_AVRO;
+	private static SpecificRecord RESPONSE_AVRO;
 	private static String RESPONSE_REQUEST_ID;
 	private final String lock = "lock";
 
-	@Test
-	public void simpleMessage() {
+	private SpecificRecord expectedResponse;
 
+	private String requestId;
+
+	@Before
+	public void beforeEachTest() {
 		RESPONSE_AVRO = null;
 		RESPONSE_REQUEST_ID = null;
 
-		final RequestMessage msg = Fixture.from(RequestMessage.class).gimme("team");
-		final TeamAvro teamAvro = Fixture.from(TeamAvro.class).gimme("valid");
-		final String requestId = UUID.randomUUID().toString();
+		expectedResponse = null;
+		requestId = UUID.randomUUID().toString();
+	}
 
+	@After
+	public void afterEachTest() {
+		assertThat(requestId, equalTo(RESPONSE_REQUEST_ID));
+		assertThat(expectedResponse, equalTo(RESPONSE_AVRO));
+	}
+
+	@Test
+	public void simpleTeamMessage() {
+		expectedResponse = Fixture.from(TeamAvro.class).gimme("valid");
+
+		sendAndWait(Fixture.from(RequestMessage.class).gimme("team"), requestId);
+	}
+
+	@Test
+	public void simplePurchaseMessage() {
+		expectedResponse = Fixture.from(PurchaseAvro.class).gimme("valid");
+
+		sendAndWait(Fixture.from(RequestMessage.class).gimme("purchase"), requestId);
+	}
+
+	private void sendAndWait(final RequestMessage msg, final String requestId) {
 		jmsTemplate.convertAndSend("queue.sample", msg.getTrancode(), new MessagePostProcessor() {
 			@Override
 			public Message postProcessMessage(final Message message) throws JMSException {
@@ -77,9 +105,6 @@ public abstract class AbstractApplicationTests {
 			}
 		} catch (final InterruptedException e) {
 		}
-
-		assertThat(requestId, equalTo(RESPONSE_REQUEST_ID));
-		assertThat(teamAvro, equalTo(RESPONSE_AVRO));
 	}
 
 	@Bean

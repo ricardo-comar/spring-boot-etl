@@ -1,6 +1,8 @@
 spring:
   application:
     name: border-service
+  main:
+    banner-mode: "off"
     
 server:
   port: 8080

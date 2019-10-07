@@ -1,4 +1,4 @@
-package com.github.ricardocomar.springbootetl.etlconsumer.transformer;
+package com.github.ricardocomar.springbootetl.etlconsumer.transformer.handler;
 
 import java.math.BigDecimal;
 import java.util.Properties;

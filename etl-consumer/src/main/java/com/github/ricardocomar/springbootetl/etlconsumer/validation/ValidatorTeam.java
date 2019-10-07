@@ -20,7 +20,6 @@ public class ValidatorTeam extends AbstractValidator<Team> {
 	@Autowired
 	private ValidatorEmployee valEmployee;
 
-
 	@Override
 	public void rules() {
 

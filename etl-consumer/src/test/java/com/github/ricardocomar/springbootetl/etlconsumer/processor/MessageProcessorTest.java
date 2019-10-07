@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
 
-import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificRecord;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,12 +52,12 @@ public class MessageProcessorTest {
 			assertEquals(team, invocation.getArgument(0));
 			assertEquals(requestId, invocation.getArgument(1));
 			return null;
-		}).when(mockProducer).sendMessage(Mockito.any(GenericRecord.class), Mockito.anyString());
+		}).when(mockProducer).sendMessage(Mockito.any(SpecificRecord.class), Mockito.anyString());
 
 		final RequestMessage requestMessage = Fixture.from(RequestMessage.class).gimme("team");
 		processor.process(requestMessage.getTrancode(), requestId);
 
-		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any(GenericRecord.class),
+		Mockito.verify(mockProducer, Mockito.atLeastOnce()).sendMessage(Mockito.any(SpecificRecord.class),
 				Mockito.anyString());
 
 	}
