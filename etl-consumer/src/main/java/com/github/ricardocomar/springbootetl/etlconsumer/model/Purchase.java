@@ -46,8 +46,5 @@ public class Purchase implements ConsumerMainModel {
 		OPEN, PAID, CANCELLED, RETURNED, DELIVERED;
 	}
 
-	public boolean isValidTotalValue() {
-		return totalValue.equals(items.stream().map(PurchaseItem::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
-	}
 
 }

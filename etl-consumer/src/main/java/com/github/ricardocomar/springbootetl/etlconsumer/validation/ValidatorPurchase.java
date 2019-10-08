@@ -3,11 +3,11 @@ package com.github.ricardocomar.springbootetl.etlconsumer.validation;
 import static br.com.fluentvalidator.predicate.ComparablePredicate.between;
 import static br.com.fluentvalidator.predicate.ComparablePredicate.lessThanOrEqual;
 import static br.com.fluentvalidator.predicate.LogicalPredicate.not;
-import static br.com.fluentvalidator.predicate.ObjectPredicate.equalTo;
 import static br.com.fluentvalidator.predicate.ObjectPredicate.nullValue;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringEmptyOrNull;
 import static br.com.fluentvalidator.predicate.StringPredicate.stringMatches;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.ricardocomar.springbootetl.etlconsumer.model.Purchase;
+import com.github.ricardocomar.springbootetl.etlconsumer.model.PurchaseItem;
 
 import br.com.fluentvalidator.AbstractValidator;
 
@@ -52,10 +53,17 @@ public class ValidatorPurchase extends AbstractValidator<Purchase> {
 
 		ruleFor("totalValue", Purchase::getTotalValue).must(not(nullValue())).withMessage("totalValue is mandatory")
 				.critical(ETLValidationException.class);
-		ruleFor("totalValue", Purchase::isValidTotalValue).must(equalTo(true)).withMessage("invalid totalValue")
+		ruleFor("totalValue", purchase -> purchase)
+				.must(p -> p.getTotalValue()
+						.equals(
+								p.getItems().stream().map(PurchaseItem::getValue).reduce(BigDecimal.ZERO,
+										BigDecimal::add)))
+				.withMessage("totalValue must be the sum of items values")
 				.critical(ETLValidationException.class);
-
 	}
-
+//
+//	private static Predicate<Purchase> isTotalValueValid() {
+//		return PredicateBuilder.<Purchase>from(not(nullValue())).and());
+//	}
 
 }

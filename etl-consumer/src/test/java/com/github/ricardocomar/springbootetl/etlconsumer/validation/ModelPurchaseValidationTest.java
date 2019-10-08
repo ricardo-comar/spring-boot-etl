@@ -1,7 +1,10 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.validation;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,54 +26,94 @@ public class ModelPurchaseValidationTest {
 
 	@Autowired
 	private ValidatorPurchase validator;
+	private Purchase purchase;
 
 	@BeforeClass
 	public static void setUp() {
 		FixtureFactoryLoader.loadTemplates(PurchaseModelFixture.class.getPackage().getName());
 	}
 
+	@Before
+	public void before() {
+		purchase = Fixture.from(Purchase.class).gimme("valid");
+	}
+
 	@Test
 	public void testValid() {
-
-		final Purchase purchase = Fixture.from(Purchase.class).gimme("valid");
-
 		validator.validate(purchase);
 	}
 
 	@Test(expected = ValidationException.class)
 	public void testEmptyTransaction() throws Exception {
-
-		final Purchase purchase = Fixture.from(Purchase.class).gimme("valid");
 		purchase.setTransaction(null);
-
 		validator.validate(purchase);
 	}
 
 	@Test(expected = ValidationException.class)
-	public void testEmptyName() throws Exception {
+	public void testInvalidTransaction() throws Exception {
+		purchase.setTransaction("ABC");
+		validator.validate(purchase);
+	}
 
-		final Purchase purchase = Fixture.from(Purchase.class).gimme("valid");
+	@Test(expected = ValidationException.class)
+	public void testEmptyId() throws Exception {
 		purchase.setId(null);
-
 		validator.validate(purchase);
 	}
 
 	@Test(expected = ValidationException.class)
-	public void testEmptyEmployees() throws Exception {
-
-		final Purchase purchase = Fixture.from(Purchase.class).gimme("valid");
-
+	public void testEmptyCustomer() throws Exception {
+		purchase.setCustomer(null);
 		validator.validate(purchase);
 	}
 
 	@Test(expected = ValidationException.class)
-	public void testOverloadedEmployees() throws Exception {
+	public void testEmptyStatus() throws Exception {
+		purchase.setStatus(null);
+		validator.validate(purchase);
+	}
 
-		final Purchase purchase = Fixture.from(Purchase.class).gimme("valid");
-		purchase.setItems(Fixture.from(PurchaseItem.class).gimme(5, "g6play"));
+	@Test(expected = ValidationException.class)
+	public void testEmptyDate() throws Exception {
+		purchase.setDate(null);
+		validator.validate(purchase);
+	}
+
+	@Test(expected = ValidationException.class)
+	public void testInvalidDate() throws Exception {
+		purchase.setDate(LocalDate.now().plusDays(1));
+		validator.validate(purchase);
+	}
+
+	@Test(expected = ValidationException.class)
+	public void testNullItems() throws Exception {
+		purchase.setItems(null);
+		validator.validate(purchase);
+	}
+
+	@Test(expected = ValidationException.class)
+	public void testEmptyItems() throws Exception {
+		purchase.setItems(new ArrayList<PurchaseItem>());
+		validator.validate(purchase);
+	}
+
+	@Test(expected = ValidationException.class)
+	public void testOverloadedItems() throws Exception {
+		purchase.setItems(Fixture.from(PurchaseItem.class).gimme(6, "g6play"));
 		purchase.setTotalValue(
 				purchase.getItems().stream().map(PurchaseItem::getValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+		validator.validate(purchase);
+	}
 
+	@Test(expected = ValidationException.class)
+	public void testEmptyTotalValue() throws Exception {
+		purchase.setTotalValue(null);
+		validator.validate(purchase);
+	}
+
+	@Test(expected = ValidationException.class)
+	public void testInvalidTotalValue() throws Exception {
+		purchase.setTotalValue(new BigDecimal(1.0));
 		validator.validate(purchase);
 	}
 }
