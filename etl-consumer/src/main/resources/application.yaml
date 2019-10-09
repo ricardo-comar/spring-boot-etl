@@ -3,6 +3,8 @@ server:
 
 eureka:
   client:
+    healthcheck:
+      enabled: true
     register-with-eureka: true
     fetch-registry: true
     service-url:
@@ -24,6 +26,13 @@ spring:
     password: password
     in-memory: false
     broker-url: tcp://localhost:61616
+  cloud:
+    discovery:
+      enabled: true
+      client:
+        composite-indicator:
+          enabled: true            
+       
   kafka:
     properties:
       schema.registry.url: http://localhost:8081  

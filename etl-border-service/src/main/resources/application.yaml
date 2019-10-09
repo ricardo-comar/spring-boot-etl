@@ -1,6 +1,13 @@
 spring:
   application:
     name: border-service
+  cloud:
+    discovery:
+      enabled: true
+      client:
+        composite-indicator:
+          enabled: true            
+  
   main:
     banner-mode: "off"
     
@@ -14,7 +21,11 @@ management:
         include: '*'
         
 eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 5
   client:
+    healthcheck:
+      enabled: true
     register-with-eureka: true
     fetch-registry: true
     service-url:
