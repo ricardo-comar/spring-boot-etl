@@ -3,11 +3,11 @@ package com.github.ricardocomar.springbootetl.etlproducer.service;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
-import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
-import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team.Employee.EmployeeStatus;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
 import com.github.ricardocomar.springbootetl.model.TeamAvro;
@@ -37,9 +35,9 @@ public class ConcurrentProcessor {
 	private AppProperties appProps;
 
 	private final Map<String, ProcessRequest> lockMap = new ConcurrentHashMap<>();
-	private final Map<String, TeamAvro> responseMap = new ConcurrentHashMap<>();
+	private final Map<String, SpecificRecord> responseMap = new ConcurrentHashMap<>();
 
-	public Team handle(final ProcessRequest request) throws UnavailableResponseException {
+	public SpecificRecord handle(final ProcessRequest request) throws UnavailableResponseException {
 
 		LOGGER.debug("Message to be processed: {}", request);
 		final String requestId = UUID.randomUUID().toString();
@@ -77,21 +75,13 @@ public class ConcurrentProcessor {
 			}
 		}
 
-		final TeamAvro responseAvro = responseMap.remove(requestId);
+		final SpecificRecord responseAvro = responseMap.remove(requestId);
 		if (responseAvro == null) {
 			throw new UnavailableResponseException("No response for id " + requestId);
 		}
 		
-		final Team response = Team.builder().teamName(responseAvro.getTeamName())
-				.employees(responseAvro.getEmployees().stream().filter(emp -> emp != null)
-				.map(emp -> Team.Employee.builder().firstName(emp.getFirstName()).lastName(emp.getLastName())
-						.title(emp.getTitle()).hireDate(emp.getHireDate()).salary(emp.getSalary())
-						.status(EmployeeStatus.valueOf(emp.getStatus().name())).build())
-						.collect(Collectors.toList())
-				).build();
-		
-		LOGGER.debug("Returning response for id ({}) = {}", requestId, response);
-		return response;
+		LOGGER.debug("Returning response for id ({}) = {}", requestId, responseAvro);
+		return responseAvro;
 
 	}
 

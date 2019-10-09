@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.avro.specific.SpecificRecord;
 import org.assertj.core.util.Arrays;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -29,7 +30,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
-import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
 import com.github.ricardocomar.springbootetl.model.EmployeeAvro;
@@ -129,8 +129,8 @@ public class ConcurrentProcessorTest {
 			@Override
 			public void run() {
 				try {
-					final Team resp = processor.handle(request);
-					response.setTeamName(resp.getTeamName());
+					final SpecificRecord resp = processor.handle(request);
+//TODO: ativar					response.setTeamName(resp.getTeamName());
 				} catch (final UnavailableResponseException e) {
 					e.printStackTrace();
 				}

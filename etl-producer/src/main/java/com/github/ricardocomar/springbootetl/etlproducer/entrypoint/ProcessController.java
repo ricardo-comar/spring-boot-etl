@@ -1,6 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlproducer.entrypoint;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.avro.specific.SpecificRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessRequest;
 import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse;
-import com.github.ricardocomar.springbootetl.etlproducer.entrypoint.model.ProcessResponse.Team;
 import com.github.ricardocomar.springbootetl.etlproducer.exception.UnavailableResponseException;
 import com.github.ricardocomar.springbootetl.etlproducer.service.ConcurrentProcessor;
 
@@ -30,12 +29,12 @@ public class ProcessController {
 		final long start = System.currentTimeMillis();
 
 		try {
-			final Team response = processor.handle(request);
+			final SpecificRecord response = processor.handle(request);
 
-			return (response == null || StringUtils.isEmpty(response.getTeamName())
+			return (response == null || response.get(0) == null
 					? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					: ResponseEntity.ok())
-							.body(ProcessResponse.builder().id(request.getId()).response(response)
+							.body(ProcessResponse.builder().id(request.getId()).response(response.toString())
 									.duration(System.currentTimeMillis() - start).build());
 
 		} catch (final UnavailableResponseException e) {

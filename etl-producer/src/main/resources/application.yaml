@@ -48,7 +48,7 @@ spring:
       enabled: true
       client:
         composite-indicator:
-          enabled: true
+          enabled: false
         health-indicator:
           enabled: true
           include-description: true
