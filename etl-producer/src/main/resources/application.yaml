@@ -16,10 +16,18 @@ server:
   port: 0
 
 management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
   endpoints:
     web:
       exposure:
         include: "*"
+    diskspace:
+      enabled: true
+      
+        
         
 eureka:
   client:
@@ -35,6 +43,17 @@ eureka:
 spring:
   main:
     banner-mode: "off"
+  cloud:
+    discovery:
+      enabled: true
+      client:
+        composite-indicator:
+          enabled: true
+        health-indicator:
+          enabled: true
+          include-description: true
+    config:
+      enabled: false
   application:
     name: etl-producer
   activemq:

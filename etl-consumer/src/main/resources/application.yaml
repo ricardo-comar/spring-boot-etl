@@ -13,6 +13,19 @@ eureka:
     appname: etl-consumer
     instance-id: etl-consumer-${random.value}
 
+
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    diskspace:
+      enabled: true
+      
 spring:
 #  profiles:
 #    include:
@@ -31,7 +44,12 @@ spring:
       enabled: true
       client:
         composite-indicator:
-          enabled: true            
+          enabled: true
+        health-indicator:
+          enabled: true
+          include-description: true
+    config:
+      enabled: false
        
   kafka:
     properties:

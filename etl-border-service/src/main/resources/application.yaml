@@ -21,6 +21,8 @@ management:
         include: '*'
         
 eureka:
+  server: 
+    enable-self-preservation: false
   instance:
     lease-renewal-interval-in-seconds: 5
   client:
