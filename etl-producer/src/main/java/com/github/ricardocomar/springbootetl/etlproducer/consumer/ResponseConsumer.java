@@ -1,5 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlproducer.consumer;
 
+import org.apache.avro.generic.GenericRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.ricardocomar.springbootetl.etlproducer.config.AppProperties;
 import com.github.ricardocomar.springbootetl.etlproducer.service.model.MessageEvent;
-import com.github.ricardocomar.springbootetl.model.TeamAvro;
 
 @Component
 public class ResponseConsumer {
@@ -27,7 +27,7 @@ public class ResponseConsumer {
 	private ApplicationContext appContext;
 
 	@KafkaListener(topics = "topicOutbound", groupId = "producer-${random.value}")
-	public void consumeResponse(@Payload final TeamAvro message,
+	public void consumeResponse(@Payload final GenericRecord message,
 			@Header(required = false, name = AppProperties.HEADER_REQUEST_ID) final String requestId)
 			throws Exception {
 

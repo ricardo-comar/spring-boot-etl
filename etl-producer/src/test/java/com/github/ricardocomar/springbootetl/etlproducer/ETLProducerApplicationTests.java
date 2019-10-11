@@ -10,8 +10,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.github.ricardocomar.springbootetl.etlproducer.SDFProducerApplication;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SDFProducerApplication.class)
 @ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)

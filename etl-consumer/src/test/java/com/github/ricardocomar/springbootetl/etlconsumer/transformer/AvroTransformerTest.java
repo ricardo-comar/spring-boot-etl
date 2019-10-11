@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.generic.GenericRecord;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +38,7 @@ public class AvroTransformerTest {
 		
 		final Team trancodeTeam = Fixture.from(Team.class).gimme("valid");
 
-		final SpecificRecord avro = transformer.from(trancodeTeam);
+		final GenericRecord avro = transformer.from(trancodeTeam);
 		assertThat(avro, notNullValue());
 
 		final ConsumerModel newTrancode = transformer.to(avro);
@@ -51,7 +51,7 @@ public class AvroTransformerTest {
 
 		final Purchase trancode = Fixture.from(Purchase.class).gimme("valid");
 
-		final SpecificRecord avro = transformer.from(trancode);
+		final GenericRecord avro = transformer.from(trancode);
 		assertThat(avro, notNullValue());
 
 		final ConsumerModel newTrancode = transformer.to(avro);

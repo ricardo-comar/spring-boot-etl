@@ -2,7 +2,7 @@ package com.github.ricardocomar.springbootetl.etlconsumer.config;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.generic.GenericRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,14 +54,14 @@ public class SpringIntegrationConfig {
 	}
 
 	@Transformer(inputChannel = "avroTransformerChannel", outputChannel = "kafkaOutboundChannel")
-	public SpecificRecord fromTeamToTeamAvro(final ConsumerModel team) {
+	public GenericRecord fromTeamToTeamAvro(final ConsumerModel team) {
 		return avroTransformer.from(team);
 	}
 
 	@Bean
 	@ServiceActivator(inputChannel = "kafkaOutboundChannel")
-	public MessageHandler kafkaMessageHandler(final KafkaTemplate<String, SpecificRecord> kafkaTemplate) {
-		final KafkaProducerMessageHandler<String, SpecificRecord> handler = new KafkaProducerMessageHandler<>(
+	public MessageHandler kafkaMessageHandler(final KafkaTemplate<String, GenericRecord> kafkaTemplate) {
+		final KafkaProducerMessageHandler<String, GenericRecord> handler = new KafkaProducerMessageHandler<>(
 				kafkaTemplate);
 		handler.setTopicExpression(new LiteralExpression("topicOutbound"));
 		return handler;

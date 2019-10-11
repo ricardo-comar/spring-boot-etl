@@ -1,6 +1,6 @@
 package com.github.ricardocomar.springbootetl.etlconsumer.processor;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.generic.GenericRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class MessageProcessor {
 		final ValidationResult validationResult = validator.validate(teamTrancode);
 		LOGGER.info("Validation result: {}", validationResult);
 		
-		final SpecificRecord avro = avroTransformer.from(teamTrancode);
+		final GenericRecord avro = avroTransformer.from(teamTrancode);
 		LOGGER.info("Bean transformed into response: {}", avro);
 
 		LOGGER.info("Sending bean to response topic");

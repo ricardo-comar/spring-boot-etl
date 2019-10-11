@@ -8,8 +8,6 @@ import java.math.RoundingMode;
 
 import org.junit.Test;
 
-import com.github.ricardocomar.springbootetl.etlconsumer.transformer.handler.BigDecimalPositionalTypeHandler;
-
 public class BigDecimalPositionalTypeHandlerTest {
 
 	final BigDecimalPositionalTypeHandler handler = BigDecimalPositionalTypeHandler.builder().precision(5).scale(2)

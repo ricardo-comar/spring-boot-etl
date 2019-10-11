@@ -8,7 +8,7 @@ import java.util.UUID;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.generic.GenericRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,11 +53,11 @@ public abstract class AbstractApplicationTests {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
-	private static SpecificRecord RESPONSE_AVRO;
+	private static GenericRecord RESPONSE_AVRO;
 	private static String RESPONSE_REQUEST_ID;
 	private final String lock = "lock";
 
-	private SpecificRecord expectedResponse;
+	private GenericRecord expectedResponse;
 
 	private String requestId;
 

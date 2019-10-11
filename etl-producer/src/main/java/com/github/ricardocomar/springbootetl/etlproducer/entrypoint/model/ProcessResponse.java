@@ -8,7 +8,7 @@ import lombok.Data;
 public class ProcessResponse {
 
 	private String id;
-	private String response;
+	private Object response;
 	private Long duration;
 
 }
